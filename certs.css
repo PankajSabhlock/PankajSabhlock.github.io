@@ -35,3 +35,12 @@
 #album-box .album-close{position:absolute;top:-6px;right:-6px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;font-size:18px;cursor:pointer}
 @media (max-width:860px){.album-section{padding-top:70px;padding-bottom:70px}.album-stage{--cw:84vw}.album-card{margin:0 -17vw}}
 @media (prefers-reduced-motion:reduce){.album-card,.album-card.is-active{translate:none;transition:none}.album-card{transform:scale(var(--s,.6))}.album-card figcaption,.album-tabs button{transition:none}}
+.impact-basis{font-size:.8rem;opacity:.72;margin:.6rem 0 .8rem;line-height:1.45}.impact-basis a{text-decoration:underline;text-underline-offset:3px}
+
+.learn-proof{color:inherit;text-decoration:underline;text-decoration-color:rgba(127,127,127,.5);text-underline-offset:3px;transition:text-decoration-color .2s}.learn-proof:hover,.learn-proof:focus-visible{text-decoration-color:currentColor}
+
+.album-jump{display:flex;flex-wrap:nowrap;gap:.5rem;align-items:center;overflow-x:auto;padding:.25rem 16px .6rem;scrollbar-width:none;-webkit-overflow-scrolling:touch}.album-jump::-webkit-scrollbar{display:none}.album-jump[hidden]{display:none}.album-jump-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.6;flex:0 0 auto}.album-jump button{flex:0 0 auto;font:inherit;font-size:.85rem;padding:.35rem .8rem;border-radius:999px;border:1px solid rgba(127,127,127,.35);background:transparent;color:inherit;cursor:pointer;transition:transform .2s,border-color .2s}.album-jump button:hover,.album-jump button:focus-visible{transform:translateY(-2px);border-color:currentColor}.album-jump button span{margin-left:.4rem;opacity:.6}.album-hint{text-align:center;font-size:.8rem;opacity:.65;margin:.4rem 0 0;transition:opacity .6s ease}.album-hint.is-gone{opacity:0}@media (prefers-reduced-motion:reduce){.album-jump button,.album-hint{transition:none}}
+
+.expertise-proof{font-size:.8rem;opacity:.75;margin:.8rem 0 0;line-height:1.5}.expertise-proof a,.expertise-example a{text-decoration:underline;text-underline-offset:3px;color:inherit}
+
+.research-link{display:inline-block;margin-top:.7rem}

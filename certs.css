@@ -12,9 +12,10 @@
 .album-stage{position:relative;--cw:min(70vw,980px,calc(80vh * 1.333));width:100vw;margin-left:calc(50% - 50vw)}
 .album-track{display:flex;gap:0;overflow-x:auto;scroll-snap-type:x mandatory;padding:26px calc((100% - var(--cw))/2) 30px;scrollbar-width:none;perspective:1600px;outline-offset:-4px}
 .album-track::-webkit-scrollbar{display:none}
-.album-card{flex:0 0 var(--cw);margin:0 -9vw;scroll-snap-align:center;position:relative;opacity:var(--o,.5);transform:scale(var(--s,.6)) rotateY(var(--r,0deg));transform-origin:center;will-change:transform,opacity}
+.album-card{flex:0 0 var(--cw);margin:0 -15vw;scroll-snap-align:center;position:relative;opacity:var(--o,.5);transform:scale(var(--s,.6)) rotateY(var(--r,0deg));transform-origin:center;will-change:transform,opacity;translate:0 0;transition:translate .65s cubic-bezier(.34,1.56,.64,1)}
 .album-card button{display:block;width:100%;padding:0;border:1px solid var(--line);border-radius:8px;background:var(--wash);cursor:pointer;aspect-ratio:4/3;overflow:hidden;box-shadow:0 18px 50px rgba(0,0,0,.14)}
 .album-card.is-active button{cursor:zoom-in}
+.album-card.is-active{translate:0 -18px}
 .album-card:first-child{margin-left:0}
 .album-card:last-child{margin-right:0}
 .album-card img{width:100%;height:100%;object-fit:contain;display:block}
@@ -32,5 +33,5 @@
 #album-box img{width:100%;height:auto;max-height:84vh;object-fit:contain;display:block;background:#fff;border-radius:6px}
 #album-box figcaption{color:#fff;padding:10px 2px;font-size:14px}
 #album-box .album-close{position:absolute;top:-6px;right:-6px;width:38px;height:38px;border-radius:50%;border:0;background:#fff;font-size:18px;cursor:pointer}
-@media (max-width:860px){.album-section{padding-top:70px;padding-bottom:70px}.album-stage{--cw:84vw}.album-card{margin:0 -14vw}}
-@media (prefers-reduced-motion:reduce){.album-card{transform:scale(var(--s,.6))}.album-card figcaption,.album-tabs button{transition:none}}
+@media (max-width:860px){.album-section{padding-top:70px;padding-bottom:70px}.album-stage{--cw:84vw}.album-card{margin:0 -17vw}}
+@media (prefers-reduced-motion:reduce){.album-card,.album-card.is-active{translate:none;transition:none}.album-card{transform:scale(var(--s,.6))}.album-card figcaption,.album-tabs button{transition:none}}

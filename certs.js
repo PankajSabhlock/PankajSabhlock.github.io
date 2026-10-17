@@ -43,10 +43,10 @@ function render(){
   cards=Array.prototype.slice.call(track.children);idx=0;track.scrollLeft=0;update();
 }
 function update(){
-  var mid=track.scrollLeft+track.clientWidth/2,best=0,bd=1e9;
+  var mid=track.scrollLeft+track.clientWidth/2,best=0,bd=1e9; var step=cards.length>1?cards[1].offsetLeft-cards[0].offsetLeft:1;
   cards.forEach(function(c,i){
-    var w=c.offsetWidth,d=(c.offsetLeft+w/2-mid)/(w*0.78),a=Math.min(Math.abs(d),1.4),sgn=d<0?-1:1;
-    var s=1-Math.min(a,1)*0.42,o=1-Math.min(a,1.2)*0.62,r=reduce?0:-sgn*Math.min(a,1)*24;
+    var w=c.offsetWidth,d=(c.offsetLeft+w/2-mid)/step,a=Math.min(Math.abs(d),1.4),sgn=d<0?-1:1;
+    var s=1-Math.min(a,1)*0.58,o=1-Math.min(a,1.2)*0.62,r=reduce?0:-sgn*Math.min(a,1)*24;
     c.style.setProperty('--s',s.toFixed(3));c.style.setProperty('--o',o.toFixed(3));c.style.setProperty('--r',r.toFixed(1)+'deg');
     c.style.zIndex=String(100-Math.round(a*10));
     if(Math.abs(d)<bd){bd=Math.abs(d);best=i;}

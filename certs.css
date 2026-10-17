@@ -44,3 +44,8 @@
 .expertise-proof{font-size:.8rem;opacity:.75;margin:.8rem 0 0;line-height:1.5}.expertise-proof a,.expertise-example a{text-decoration:underline;text-underline-offset:3px;color:inherit}
 
 .research-link{display:inline-block;margin-top:.7rem}
+
+.album-tabs{display:none}
+.album-jump{margin-bottom:18px}
+.album-jump button[aria-pressed="true"]{background:#111;color:#fff;border-color:#111}
+@media (min-width:760px){.album-jump{flex-wrap:wrap;overflow:visible;padding-left:0;padding-right:0}}

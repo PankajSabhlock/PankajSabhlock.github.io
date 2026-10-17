@@ -49,7 +49,7 @@
 .album-jump{margin-bottom:18px}
 .album-jump button[aria-pressed="true"]{background:#111;color:#fff;border-color:#111}
 @media (min-width:760px){.album-jump{flex-wrap:wrap;overflow:visible;padding-left:0;padding-right:0}}
-@media(max-width:1320px){.desktop-nav,.nav-contact{display:none}.menu-toggle{display:flex;width:40px;height:40px;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:transparent;border:0;cursor:pointer}.menu-toggle>span{display:block;background:var(--ink);width:21px;height:1.5px}.mobile-nav:not([hidden]){display:flex;flex-direction:column;gap:16px;padding:15px 36px 26px;border-top:1px solid var(--line)}}
+@media(max-width:900px){.desktop-nav,.nav-contact{display:none}.menu-toggle{display:flex;width:40px;height:40px;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:transparent;border:0;cursor:pointer}.menu-toggle>span{display:block;background:var(--ink);width:21px;height:1.5px}.mobile-nav:not([hidden]){display:flex;flex-direction:column;gap:16px;padding:15px 36px 26px;border-top:1px solid var(--line)}}
 @media(min-width:1321px) and (max-width:1560px){.desktop-nav{gap:13px;font-size:.78rem}.nav-shell{gap:14px}.identity{white-space:nowrap}.name-line{white-space:nowrap}}
 
 .orbit-icon.orbit-svg{filter:none;padding:14px}
@@ -76,3 +76,5 @@ body[data-motion="paused"] .orbit-label .orbit-chart{animation-play-state:paused
 /* NAV TABS (solo link) */
 .desktop-nav .nav-solo{font-size:.92rem;padding:8px 2px;color:var(--muted)}
 .desktop-nav .nav-solo[aria-current="location"]{color:var(--blue);font-weight:600}
+/* NAV compact tabs between tablet and wide */
+@media(min-width:901px) and (max-width:1320px){.desktop-nav{gap:16px}.desktop-nav .nav-group-btn,.desktop-nav .nav-solo{font-size:.8rem}.nav-contact{padding:8px 16px;font-size:.8rem}.nav-shell{gap:12px}.identity-copy{min-width:0}}

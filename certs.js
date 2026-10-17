@@ -4,7 +4,7 @@ var root=document.getElementById('album'); if(!root||!DATA.length) return;
 var track=root.querySelector('.album-track'),tabs=root.querySelector('.album-tabs'),count=root.querySelector('.album-count'),prev=root.querySelector('[data-dir="-1"]'),next=root.querySelector('[data-dir="1"]'),modes=root.querySelectorAll('[data-mode]'),play=root.querySelector('.album-play');
 var box=document.getElementById('album-box'),boxImg=box.querySelector('img'),boxCap=box.querySelector('figcaption');
 var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-var cur=[],chips={},mode='company',group='All',cards=[],idx=0,tick=false,timer=null,paused=reduce,visible=false;
+var cur=[],chips={},mode='category',group='All',cards=[],idx=0,tick=false,timer=null,paused=reduce,visible=false;
 var jump=document.createElement('div');jump.className='album-jump';jump.setAttribute('role','group');jump.setAttribute('aria-label','Jump to');tabs.parentNode.insertBefore(jump,tabs.nextSibling);
 var hint=document.createElement('p');hint.className='album-hint';hint.textContent='Swipe, drag or use the arrow keys';root.querySelector('.album-stage').appendChild(hint);
 function yr(d){return d.slice(0,4);}
@@ -20,8 +20,11 @@ function topicOf(c){
   if(/Power BI|Product Management/.test(t)) return 'Data and Product';
   return 'Cloud and Applied AI';
 }
-function keyOf(c){return mode==='company'?c.issuer:(mode==='year'?yr(c.date):topicOf(c));}
-function sorted(){return DATA.slice().sort(function(a,b){return b.date.localeCompare(a.date);});}
+var CAT_ORDER=['Awards','Professional standing','Academic','Courses and badges'];
+var CAT_MAP={c47:'Awards',c48:'Awards',c37:'Awards',c49:'Professional standing',c50:'Professional standing',c13:'Professional standing',c51:'Academic',c63:'Academic',c46:'Academic'};
+function catOf(c){var m=c.img.match(/(c\d+)\./);return (m&&CAT_MAP[m[1]])||'Courses and badges';}
+function keyOf(c){return mode==='category'?catOf(c):(mode==='company'?c.issuer:(mode==='year'?yr(c.date):topicOf(c)));}
+function sorted(){return DATA.slice().sort(function(a,b){if(mode==='category'){var d=CAT_ORDER.indexOf(catOf(a))-CAT_ORDER.indexOf(catOf(b));if(d)return d;}return b.date.localeCompare(a.date);});}
 function render(){
   var all=sorted(),m=new Map();
   all.forEach(function(c){var k=keyOf(c);m.set(k,(m.get(k)||0)+1);});

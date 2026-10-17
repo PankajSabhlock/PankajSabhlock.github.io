@@ -49,3 +49,15 @@
 .album-jump{margin-bottom:18px}
 .album-jump button[aria-pressed="true"]{background:#111;color:#fff;border-color:#111}
 @media (min-width:760px){.album-jump{flex-wrap:wrap;overflow:visible;padding-left:0;padding-right:0}}
+@media(max-width:1320px){.desktop-nav,.nav-contact{display:none}.menu-toggle{display:flex;width:40px;height:40px;align-items:center;justify-content:center;flex-direction:column;gap:6px;background:transparent;border:0;cursor:pointer}.menu-toggle>span{display:block;background:var(--ink);width:21px;height:1.5px}.mobile-nav:not([hidden]){display:flex;flex-direction:column;gap:16px;padding:15px 36px 26px;border-top:1px solid var(--line)}}
+@media(min-width:1321px) and (max-width:1560px){.desktop-nav{gap:13px;font-size:.78rem}.nav-shell{gap:14px}.identity{white-space:nowrap}.name-line{white-space:nowrap}}
+
+.orbit-icon.orbit-svg{filter:none;padding:14px}
+.orbit-icon.orbit-raster.orbit-data-asset,.orbit-icon.orbit-raster.orbit-governance-asset{filter:none}
+.orbit-chart{position:absolute;right:-14px;bottom:-12px;width:40px;height:40px;object-fit:contain;filter:drop-shadow(0 6px 8px #12386a2e);animation:chart-bob 4.6s ease-in-out infinite;animation-play-state:paused;pointer-events:none}
+.orbit-label.motion-visible .orbit-chart{animation-play-state:running}
+body[data-motion="paused"] .orbit-label .orbit-chart{animation-play-state:paused}
+@keyframes chart-bob{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-7px) rotate(7deg)}}
+@media(prefers-reduced-motion:reduce){.orbit-chart{animation:none}}
+.orbit-badge{width:36px;height:36px;padding:7px;background:rgba(255,255,255,.96);border:1px solid #dbe8f3;border-radius:50%;box-shadow:0 6px 16px #12386a24;filter:none;animation-delay:-1.8s}
+.orbit-badge-left{right:auto;left:-14px;animation-delay:-3.2s}

@@ -97,7 +97,7 @@
   const navTargets = new Set(navLinks.map(link => link.hash.slice(1)));
   const navSections = Array.from(document.querySelectorAll('main > section[id]')).filter(section => navTargets.has(section.id));
   const setActiveNav = id => navLinks.forEach(link => {
-    const target = link.closest('.desktop-nav') && id === 'credentials' ? 'recognition' : id;
+    const target = link.closest('.desktop-nav') && id === 'learning' ? 'credentials' : id;
     if (link.hash === `#${target}`) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   });
@@ -109,7 +109,8 @@
   const syncStickyTitle = () => {
     const headerBottom = document.querySelector('.site-header').getBoundingClientRect().bottom;
     let current = titledSections[0];
-    for (const section of titledSections) if (section.getBoundingClientRect().top <= headerBottom + 96) current = section;
+    const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    for (const section of titledSections) {const landing = pad + (parseFloat(getComputedStyle(section).scrollMarginTop) || 0) + 12; if (section.getBoundingClientRect().top <= Math.max(headerBottom + 96, landing)) current = section;}
     const heading = current.querySelector('h1,h2');
     const show = heading.getBoundingClientRect().bottom <= headerBottom + 68;
     titleBar.classList.toggle('is-visible',show);
@@ -129,7 +130,8 @@
     if (navigationLock) return;
     const marker = document.querySelector('.site-header').getBoundingClientRect().height + 96;
     let current = '';
-    for (const section of navSections) if (section.getBoundingClientRect().top <= marker) current = section.id;
+    const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    for (const section of navSections) {const landing = pad + (parseFloat(getComputedStyle(section).scrollMarginTop) || 0) + 12; if (section.getBoundingClientRect().top <= Math.max(marker, landing)) current = section.id;}
     setActiveNav(current);
   };
   const releaseNavigation = () => {navigationLock = ''; clearTimeout(navigationTimer); trackNavigation();};
@@ -141,7 +143,7 @@
     clearTimeout(navigationTimer);
     navigationTimer = setTimeout(releaseNavigation, 1200);
   }));
-  window.addEventListener('scroll', () => {if (!scrollFrame) scrollFrame = requestAnimationFrame(trackNavigation);}, {passive:true});
+  window.addEventListener('scroll', () => {if (navigationLock) {clearTimeout(navigationTimer); navigationTimer = setTimeout(releaseNavigation, 160);} if (!scrollFrame) scrollFrame = requestAnimationFrame(trackNavigation);}, {passive:true});
   window.addEventListener('scrollend', releaseNavigation);
   window.addEventListener('wheel', releaseNavigation, {passive:true});
   window.addEventListener('touchstart', releaseNavigation, {passive:true});

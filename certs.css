@@ -61,3 +61,18 @@ body[data-motion="paused"] .orbit-label .orbit-chart{animation-play-state:paused
 @media(prefers-reduced-motion:reduce){.orbit-chart{animation:none}}
 .orbit-badge{width:36px;height:36px;padding:7px;background:rgba(255,255,255,.96);border:1px solid #dbe8f3;border-radius:50%;box-shadow:0 6px 16px #12386a24;filter:none;animation-delay:-1.8s}
 .orbit-badge-left{right:auto;left:-14px;animation-delay:-3.2s}
+/* NAV TABS */
+.desktop-nav{gap:30px;align-items:center}
+.nav-group{position:relative}
+.nav-group-btn{background:none;border:0;font:inherit;font-size:.92rem;color:var(--muted);padding:8px 2px;cursor:pointer}
+.nav-group-btn::after{content:"";display:inline-block;margin-left:7px;width:6px;height:6px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:rotate(45deg) translateY(-2px)}
+.nav-group-menu{display:none;position:absolute;top:100%;left:-14px;min-width:240px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 20px 50px #12284a1f;flex-direction:column;gap:2px;z-index:40}
+.nav-group:hover .nav-group-menu,.nav-group:has(:focus-visible) .nav-group-menu,.nav-group.open .nav-group-menu{display:flex}
+.nav-group-menu a{padding:10px 12px;border-radius:9px;color:var(--ink)}
+.nav-group-menu a::after{display:none}
+.nav-group-menu a:hover{background:#f1f6fc;color:var(--blue)}
+.nav-group-menu a[aria-current="location"]{background:#eaf2ff;color:var(--blue)}
+.nav-group:has(a[aria-current]) .nav-group-btn{color:var(--blue);font-weight:600;box-shadow:0 2px 0 var(--blue)}
+/* NAV TABS (solo link) */
+.desktop-nav .nav-solo{font-size:.92rem;padding:8px 2px;color:var(--muted)}
+.desktop-nav .nav-solo[aria-current="location"]{color:var(--blue);font-weight:600}

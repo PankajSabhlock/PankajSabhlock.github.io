@@ -207,7 +207,7 @@ draw:function(dt){var self=this;this.cur=[];this.c.forEach(function(c){var tg=sl
 var KW={i:-1,ph:99,cells:[],key:''},KOC=document.createElement('canvas'),KOX=KOC.getContext('2d',{willReadFrequently:true});
 var KW_IN=.9,KW_HOLD=3.4,KW_END=4.2;
 function kwBox(g){var p=g.p;
- if(p===7||p===1)return{x:g.cx,y:g.cy-g.R*.55,w:g.R*.86,h:g.R*.15};
+ if(p===7||p===1)return{x:g.cx,y:g.cy-g.R*.5,w:g.R*.78,h:g.R*.13};
  if(p===2||p===4||p===5)return{x:g.cx,y:g.cy-g.R*.85,w:g.R*1.3,h:g.R*.15};
  return{x:g.cx,y:g.cy,w:g.R*.5,h:g.R*.1}}
 function kwBuild(word,b){var cells=[];if(!KOX)return cells;var kp=Math.max(2,Math.round(CFG.gran*.75)),fs=Math.max(10,Math.floor(b.h));

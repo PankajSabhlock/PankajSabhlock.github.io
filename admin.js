@@ -47,10 +47,10 @@ function openPanel(){sess(true);addStyle();if(panel){panel.hidden=false;refresh(
  function group(label,items,key,onPick){var row=el('div',{class:'sa-row'});items.forEach(function(it){row.appendChild(el('button',{type:'button',class:'sa-btn','data-k':key,'data-v':String(it.v),title:it.title||'',text:it.label,on:{click:function(){onPick(it.v)}}}))});return el('div',{class:'sa-sec'},[el('b',{text:label}),row])}
  var names=HF.names(),modeName=el('div',{class:'sa-name'});
  var heroSec=group('HERO',[{v:'flow',label:'Flow animation (v5)'},{v:'orbit',label:'Orbit visual (old)'}],'hero',function(v){HF.set({hero:v});refresh()});
- var modeItems=[];for(var k=1;k<=10;k++)modeItems.push({v:k,label:String(k),title:names[k]});
+ var modeItems=[];for(var k=1;k<=11;k++)modeItems.push({v:k,label:String(k),title:names[k]});
  var modeSec=group('ANIMATION',modeItems,'mode',function(v){HF.set({mode:v});refresh()});modeSec.appendChild(modeName);
- var panSec=group('CHART STYLE (options 6 to 10)',[{v:1,label:'Donut + bars'},{v:2,label:'Bars'},{v:3,label:'Radial'},{v:4,label:'Trend'},{v:5,label:'Heat'},{v:6,label:'Rings'},{v:7,label:'3 rings + bars + trend'}],'panel',function(v){HF.set({panel:v});refresh()});
- var SL=[['burst','Burst',0,200,10,'%'],['density','Dot density',20,150,5,'%'],['speed','Speed',30,200,5,'%'],['opacity','Visibility',20,100,5,'%'],['size','Visual size',25,60,1,''],['gran','Granule',3,8,1,'px']],sliders={};
+ var panSec=group('CHART STYLE (options 6 to 11)',[{v:1,label:'Donut + bars'},{v:2,label:'Bars'},{v:3,label:'Radial'},{v:4,label:'Trend'},{v:5,label:'Heat'},{v:6,label:'Rings'},{v:7,label:'3 rings + bars + trend'}],'panel',function(v){HF.set({panel:v});refresh()});
+ var SL=[['burst','Burst',0,200,10,'%'],['density','Dot density',20,150,5,'%'],['speed','Speed',30,200,5,'%'],['opacity','Visibility',20,100,5,'%'],['size','Visual size',25,60,1,''],['gran','Granule',3,8,1,'px'],['ringGap','Ring opening',0,50,5,'%']],sliders={};
  var slSec=el('div',{class:'sa-sec'},[el('b',{text:'SETTINGS'})]);
  SL.forEach(function(c){var o=el('output'),i=el('input',{type:'range',min:c[2],max:c[3],step:c[4],'aria-label':c[1]});
   i.addEventListener('input',function(){o.textContent=i.value+c[5];var p={};p[c[0]]=+i.value;HF.set(p)});sliders[c[0]]={i:i,o:o,u:c[5]};slSec.appendChild(el('label',{class:'sa-sl'},[el('span',{text:c[1]}),i,o]))});

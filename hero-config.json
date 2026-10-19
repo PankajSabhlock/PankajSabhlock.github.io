@@ -1,6 +1,6 @@
 {
   "hero": "flow",
-  "mode": 6,
+  "mode": 11,
   "panel": 7,
   "burst": 20,
   "density": 25,
@@ -8,6 +8,7 @@
   "opacity": 45,
   "size": 39,
   "gran": 4,
+  "ringGap": 25,
   "kw": true,
   "words": ["LEADERSHIP", "DATA", "AI GOVERNANCE", "STRATEGIC INSIGHTS", "MENTORING", "RESPONSIBLE AI", "DATA PRODUCTS", "DECISION INTELLIGENCE", "DATA STRATEGY"]
 }

@@ -210,13 +210,19 @@ function kwBox(g){var p=g.p;
  if(p===7||p===1)return{x:g.cx,y:g.cy-g.R*.5,w:g.R*.78,h:g.R*.13};
  if(p===2||p===4||p===5)return{x:g.cx,y:g.cy-g.R*.85,w:g.R*1.3,h:g.R*.15};
  return{x:g.cx,y:g.cy,w:g.R*.5,h:g.R*.1}}
-function kwBuild(word,b){var cells=[];if(!KOX)return cells;var kp=Math.max(2,Math.round(CFG.gran*.75)),fs=Math.max(10,Math.floor(b.h));
- KOX.font='700 '+fs+'px system-ui,-apple-system,"Segoe UI",sans-serif';var w=KOX.measureText(word).width;if(w>b.w)fs=Math.max(8,Math.floor(fs*b.w/w));
- KOC.width=Math.ceil(b.w)+8;KOC.height=Math.ceil(fs*1.4)+8;KOX.clearRect(0,0,KOC.width,KOC.height);
- KOX.font='700 '+fs+'px system-ui,-apple-system,"Segoe UI",sans-serif';KOX.textAlign='center';KOX.textBaseline='middle';KOX.fillStyle='#000';KOX.fillText(word,KOC.width/2,KOC.height/2);
+function kwLines(word){var w=word.split(/\s+/).filter(Boolean);if(w.length<2)return[word];var best=1,bd=1e9;
+ for(var i=1;i<w.length;i++){var d=Math.abs(w.slice(0,i).join(' ').length-w.slice(i).join(' ').length);if(d<bd){bd=d;best=i}}
+ return[w.slice(0,best).join(' '),w.slice(best).join(' ')]}
+function kwBuild(word,b){var cells=[];if(!KOX)return cells;var lines=kwLines(word),two=lines.length>1,kp=Math.max(2,Math.round(CFG.gran*.75)),
+ fs=Math.max(10,Math.floor(b.h*(two?.82:1))),maxW=b.w*(two?.9:1),font=function(){return '700 '+fs+'px system-ui,-apple-system,"Segoe UI",sans-serif'};
+ KOX.font=font();var w=Math.max.apply(null,lines.map(function(l){return KOX.measureText(l).width}));if(w>maxW)fs=Math.max(8,Math.floor(fs*maxW/w));
+ var lh=fs*1.12;KOC.width=Math.ceil(b.w)+8;KOC.height=Math.ceil(lh*lines.length+fs*.4)+8;KOX.clearRect(0,0,KOC.width,KOC.height);
+ KOX.font=font();KOX.textAlign='center';KOX.textBaseline='middle';KOX.fillStyle='#000';
+ lines.forEach(function(l,i){KOX.fillText(l,KOC.width/2,KOC.height/2+(i-(lines.length-1)/2)*lh)});
  var data;try{data=KOX.getImageData(0,0,KOC.width,KOC.height).data}catch(e){return cells}
+ var dy=two?b.h*.22:0;
  for(var y=0;y<KOC.height;y+=kp)for(var x=0;x<KOC.width;x+=kp){var a=data[((y+(kp>>1))*KOC.width+x+(kp>>1))*4+3];
-  if(a>110){var cx=x-KOC.width/2,cy=y-KOC.height/2,f=(cx/b.w)+.5;cells.push({x:cx,y:cy,sx:cx+rnd(-1,1)*b.w*.45,sy:cy+rnd(-1,1)*b.h*2.2,d:Math.random(),c:COL[Math.max(0,Math.min(2,Math.floor(f*3)))]})}}
+  if(a>110){var cx=x-KOC.width/2,cy=y-KOC.height/2+dy,f=(cx/b.w)+.5;cells.push({x:cx,y:cy,sx:cx+rnd(-1,1)*b.w*.45,sy:cy+rnd(-1,1)*b.h*2.2,d:Math.random(),c:COL[Math.max(0,Math.min(2,Math.floor(f*3)))]})}}
  cells.kp=kp;return cells}
 function kwDraw(dt,g){var list=(CFG.words||[]).filter(function(s){return s&&String(s).trim()});if(!CFG.kw||!list.length)return;
  KW.ph+=dt;if(KW.ph>=KW_END){KW.i=(KW.i+1)%list.length;KW.ph=0;KW.key=''}

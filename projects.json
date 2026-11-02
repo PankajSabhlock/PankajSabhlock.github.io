@@ -1,0 +1,126 @@
+{
+  "updated": "2026-11-02",
+  "note": "Edit this file to add, reorder or hide projects. show:false hides a card. group is 'product' or 'creative'. Images live in assets/projects/.",
+  "projects": [
+    {
+      "id": "ucas-planner",
+      "repo": "UCAS---Student-Planner---Key-Dates-Dashboard-",
+      "title": "UCAS Student Planner",
+      "line": "Key dates and next actions for a UCAS application, in one place a student will actually open.",
+      "why": "Admissions data turned into plain next steps for the person applying.",
+      "tags": ["Higher education", "Product design", "Works offline"],
+      "group": "product",
+      "url": "https://pankajsabhlock.github.io/UCAS---Student-Planner---Key-Dates-Dashboard-/",
+      "image": "assets/projects/ucas-planner.webp",
+      "show": true
+    },
+    {
+      "id": "ucas-dates",
+      "repo": "UCAS-Key-Dates-Dashboard",
+      "title": "UCAS Key Dates Dashboard",
+      "line": "UCAS undergraduate key dates from 2022 to 2026 on one timeline, with phase tracking, a matrix view and calendar export.",
+      "why": "Built for admissions and planning teams who need the whole cycle at a glance.",
+      "tags": ["Higher education", "Dashboard", "Planning"],
+      "group": "product",
+      "url": "https://pankajsabhlock.github.io/UCAS-Key-Dates-Dashboard/",
+      "image": "assets/projects/ucas-dates.webp",
+      "show": true
+    },
+    {
+      "id": "word-craft",
+      "repo": "Word-Craft---Vocab-Capture-Articulation-Training",
+      "title": "Word Craft",
+      "line": "Turns the words you notice into words you can use: capture, review and practise saying them.",
+      "why": "A learning tool I wanted for myself, built with React and TypeScript.",
+      "tags": ["Learning", "React", "TypeScript"],
+      "group": "product",
+      "url": "https://pankajsabhlock.github.io/Word-Craft---Vocab-Capture-Articulation-Training/",
+      "image": "assets/projects/word-craft.webp",
+      "show": true
+    },
+    {
+      "id": "birds-watch",
+      "repo": "Birds-Watch",
+      "title": "Birds Watch",
+      "line": "A location-aware bird atlas: which birds have been recorded near you, and when, from your street to the whole planet.",
+      "why": "Open biodiversity records made readable on a map and a timeline.",
+      "tags": ["Open data", "Maps", "Time series"],
+      "group": "product",
+      "url": "https://pankajsabhlock.github.io/Birds-Watch/",
+      "image": "assets/projects/birds-watch.webp",
+      "show": true
+    },
+    {
+      "id": "kaleidoscope",
+      "repo": "kaleidoscope",
+      "title": "Kaleido",
+      "line": "A pocketful of wonder: a kaleidoscope you can relax with, draw in or explore.",
+      "why": "Pattern, symmetry and calm interaction.",
+      "tags": ["Canvas", "Generative art"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/kaleidoscope/",
+      "image": "assets/projects/kaleidoscope.webp",
+      "show": true
+    },
+    {
+      "id": "pixel-art",
+      "repo": "Pixel_Art_Project",
+      "title": "FluxPixel Studio",
+      "line": "One app, three particle playgrounds: Studio, Nebula and a 3D engine.",
+      "why": "Particle systems tuned by hand until they felt right.",
+      "tags": ["Particles", "3D", "Canvas"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/Pixel_Art_Project/",
+      "image": "assets/projects/pixel-art.webp",
+      "show": true
+    },
+    {
+      "id": "aurora",
+      "repo": "Aurora---Strength-of-Symmetry",
+      "title": "Aurora",
+      "line": "Strength of Symmetry: mirrors, spirals and symmetry presets that build patterns as you move.",
+      "why": "A study in how simple rules produce rich structure.",
+      "tags": ["Symmetry", "Generative art"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/Aurora---Strength-of-Symmetry/",
+      "image": "assets/projects/aurora.webp",
+      "show": true
+    },
+    {
+      "id": "fluid-vortex",
+      "repo": "Fluid_Vortex_Simulation",
+      "title": "Fluid Canvas Studio",
+      "line": "Drag to stir the fluid. A real-time vortex simulation you can play with.",
+      "why": "Fluid physics in WebGL, made touchable.",
+      "tags": ["Simulation", "WebGL"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/Fluid_Vortex_Simulation/",
+      "image": "assets/projects/fluid-vortex.webp",
+      "show": true
+    },
+    {
+      "id": "solar-system",
+      "repo": "Solar_System",
+      "title": "Solar System",
+      "line": "The planets in orbit on a single canvas.",
+      "why": "An early canvas experiment that started the rest.",
+      "tags": ["Canvas", "Animation"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/Solar_System/",
+      "image": "assets/projects/solar-system.webp",
+      "show": true
+    },
+    {
+      "id": "firework",
+      "repo": "FireWork",
+      "title": "Nebula Fireworks",
+      "line": "Fireworks you can tune: size, speed and colour, then detonate.",
+      "why": "Small, playful and fully tunable.",
+      "tags": ["Particles", "Canvas"],
+      "group": "creative",
+      "url": "https://pankajsabhlock.github.io/FireWork/Version%2001%20-%20Nebula.html",
+      "image": "assets/projects/firework.webp",
+      "show": true
+    }
+  ]
+}

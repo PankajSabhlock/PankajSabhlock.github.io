@@ -111,3 +111,5 @@ body[data-motion="paused"] .orbit-label .orbit-icon,body[data-motion="paused"] .
 .admin-icon{position:absolute;right:28px;top:50%;transform:translateY(-50%);margin:0;cursor:pointer}
 @media(max-width:1050px){.desktop-nav{margin-left:28px}}
 @media(max-width:880px){.admin-icon{right:72px}}
+
+.sa-panel{transition:transform .35s ease,opacity .35s ease}.sa-panel.sa-off{transform:translateX(28px);opacity:0;pointer-events:none}

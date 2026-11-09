@@ -82,8 +82,8 @@ function openPanel(){sess(true);addStyle();if(panel){panel.remove();panel=null}
   el('button',{type:'button',class:'sa-btn',text:'Reset to site settings',on:{click:function(){HF.clearLocal();refresh();say('Back to the published settings.')}}})]),
   el('p',{class:'sa-note',text:'Changes show only on this browser. Visitors see hero-config.json from GitHub.'}),status]);
  var head=el('div',{class:'sa-head'},[el('strong',{text:'Site admin'}),el('div',{class:'sa-row'},[
-  el('button',{type:'button',class:'sa-btn',text:'Change password',on:{click:changePassword}}),el('button',{type:'button',class:'sa-btn',text:'Lock',title:'Close and require the password again',on:{click:function(){sess(false);panel.hidden=true}}}),
-  el('button',{type:'button',class:'sa-btn','aria-label':'Close panel',text:'Close',on:{click:function(){panel.hidden=true}}})])]);
+  el('button',{type:'button',class:'sa-btn',text:'Change password',on:{click:changePassword}}),el('button',{type:'button',class:'sa-btn',text:'Lock',title:'Close and require the password again',on:{click:function(){sess(false);hidePanel()}}}),
+  el('button',{type:'button',class:'sa-btn','aria-label':'Close panel',text:'Close',on:{click:hidePanel}})])]);
  panel=el('aside',{class:'sa-panel','aria-label':'Site admin'},[head,heroSec,modeSec,panSec,slSec,kwSec,actions]);document.body.appendChild(panel);
  function refresh(){var c=HF.get();panel.querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',String(c[b.getAttribute('data-k')])===b.getAttribute('data-v')?'true':'false')});
   modeName.textContent=names[c.mode]||'';Object.keys(sliders).forEach(function(k){sliders[k].i.value=c[k];sliders[k].o.textContent=c[k]+sliders[k].u});
@@ -92,13 +92,17 @@ function openPanel(){sess(true);addStyle();if(panel){panel.remove();panel=null}
 function refresh(){if(openPanel.refresh)openPanel.refresh()}
 function alertMsg(m){addStyle();var n=el('div',{class:'sa-panel',role:'status',text:m});document.body.appendChild(n);setTimeout(function(){n.remove()},3500)}
 function enter(){if(sess())openPanel();else askPassword()}
+var lastOut=0;
+function hidePanel(){if(!panel)return;var p=panel;panel=null;p.classList.add('sa-off');setTimeout(function(){p.remove()},350)}
+function togglePanel(){if(panel){hidePanel()}else{enter()}}
+document.addEventListener('click',function(e){var t=e.target;if(!panel||!t||!t.closest)return;if(t.closest('.sa-panel')||t.closest('#admin-open')||t.closest('.sa-modal'))return;var now=Date.now();if(now-lastOut<700){lastOut=0;hidePanel()}else{lastOut=now}});
 
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();enter()}});
 var clicks=[],idn=document.querySelector('.identity');
 if(idn)idn.addEventListener('click',function(){var now=Date.now();clicks=clicks.filter(function(t){return now-t<2000});clicks.push(now);if(clicks.length>=5){clicks=[];enter()}});
-document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('#admin-open'):null;if(b){e.preventDefault();enter()}});
+document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('#admin-open'):null;if(b){e.preventDefault();togglePanel()}});
 function fromHash(){if(location.hash==='#admin'){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}enter()}}
 window.addEventListener('hashchange',fromHash);
-document.addEventListener('heroflow:ready',function(){if(sess())openPanel();fromHash()});
+document.addEventListener('heroflow:ready',function(){fromHash()});
 if(window.HeroFlow&&document.readyState!=='loading'){fromHash()}
 })();

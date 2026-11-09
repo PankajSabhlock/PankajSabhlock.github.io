@@ -25,7 +25,7 @@ var CFG=HF_CFG;
 var NB=7;
 function DEN(){return CFG.density/100}
 var P={};
-function pInit(){P.c=[];for(var i=0;i<NB;i++)P.c.push({v:.3+Math.random()*.35,st:2+Math.floor(Math.random()*3),fl:0,ring:.5,tr:.35,lt:.35});P.dec=0}
+function pInit(){P.c=[];for(var i=0;i<NB;i++)P.c.push({v:.3+(((i*0.618034+0.25)%1))*.35,st:2+(i%3),fl:0,ring:.5,tr:.35,lt:.35});P.dec=0}
 function geo(){var D=Math.min(Math.min(VB.w,VB.h*1.1)*CFG.size/39,H*.92),R=D/2,cx=VB.x+VB.w/2,cy=Math.max(R+4,Math.min(H-R-4,VB.y+VB.h/2)),p=CFG.panel,wide=(p===2||p===4||p===5),iw=wide?D:R*1.35,ih=wide?R*1.3:R*.95;
  if(p===7){iw=R*1.0;ih=R*.6;var b7=cy+R*.42;return{cx:cx,cy:cy,R:R,iw:iw,ih:ih,base:b7,bx:cx-iw/2,bs:iw/NB,p:p,bw:.5,tbMin:cy-R*.2,th:R*.22}}
  return{cx:cx,cy:cy,R:R,iw:iw,ih:ih,base:cy+(wide?ih/2:R*.5),bx:cx-iw/2,bs:iw/NB,p:p}}
@@ -94,7 +94,7 @@ function dTrendTop(g,pt,sq,tw){var mt=g.base,k0;for(k0=0;k0<NB;k0++)mt=Math.min(
   if(c2.fl>0)for(var q=0;q<8;q++){var an=q*.785;px(xs[i]+Math.cos(an)*(6+(1-c2.fl)*14),ys[i]+Math.sin(an)*(6+(1-c2.fl)*14),2,cl,c2.fl*.6)}}}
 function pDraw(dt){if(W<200||H<200)return;var g=geo(),pt=CFG.gran,sq=Math.max(2,pt-1),tw=Math.floor(t*2),i,x,y;
  for(i=0;i<NB;i++){var c=P.c[i];if(!stackMode())c.v+=(.3-c.v)*dt*.3;c.fl=Math.max(0,c.fl-dt*2);c.ring+=((.15+val(c,g)*.8)-c.ring)*Math.min(1,dt*2.5);c.tr+=(val(c,g)-c.tr)*Math.min(1,dt*.8);c.lt+=(val(c,g)-c.lt)*Math.min(1,dt*.22)}
- P.dec-=dt;if(P.dec<=0){var r=Math.floor(Math.random()*NB);if(P.c[r].st>2)P.c[r].st--;P.dec=.6}
+ P.dec-=dt;if(P.dec<=0){P.rr=((P.rr||0)+7)%NB;var r=P.rr;if(P.c[r].st>2)P.c[r].st--;P.dec=.6}
  var dp=pt*3;for(x=g.cx-g.R;x<g.cx+g.R;x+=dp)for(y=g.cy-g.R;y<g.cy+g.R;y+=dp){if(Math.hypot(x-g.cx,y-g.cy)<g.R*.82&&hash(x,y)>.94)px(x,y,2,'8,102,220',.09)}
  if(g.p===1){dDonut(g,pt,sq,tw);dBars(g,pt,sq,tw)}
  else if(g.p===7){dDonut3(g,pt,sq,tw);dBars(g,pt,sq,tw);dTrendTop(g,pt,sq,tw)}

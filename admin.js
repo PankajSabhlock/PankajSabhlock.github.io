@@ -33,7 +33,7 @@ function askPassword(){addStyle();if(modal)return;
     if(!ok){err.textContent='Wrong password.';p1.value='';p1.focus();return}
     if(!stored){store(HASH_KEY,h)}
     openPanel();closeModal()})
-   .catch(function(){err.textContent='Could not check the password in this browser.'})}
+   .catch(function(e){err.textContent='Could not open the panel: '+(e&&e.message?e.message:String(e))})}
   p1.addEventListener('keydown',function(e){if(e.key==='Enter')submit();if(e.key==='Escape')closeModal()});
   modal=el('div',{class:'sa-modal',role:'dialog','aria-modal':'true','aria-label':'Admin sign in'},[el('div',{class:'sa-card'},[
    el('h3',{text:'Admin'}),
@@ -57,7 +57,7 @@ function changePassword(){addStyle();if(modal)return;
    el('h3',{text:'Change admin password'}),cur,n1,n2,err,
    el('div',{class:'sa-row'},[el('button',{type:'button',class:'sa-btn sa-main',text:'Save',on:{click:save}}),el('button',{type:'button',class:'sa-btn',text:'Cancel',on:{click:closeModal}})])])]);
   modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});document.body.appendChild(modal);cur.focus()}
-function openPanel(){sess(true);addStyle();if(panel){panel.hidden=false;refresh();return}
+function openPanel(){sess(true);addStyle();if(panel){panel.remove();panel=null}
  var HF=window.HeroFlow;if(!HF){alertMsg('The hero animation is not loaded on this page.');return}
  var status=el('div',{class:'sa-status','aria-live':'polite'});
  function say(m){status.textContent=m;clearTimeout(say.t);say.t=setTimeout(function(){status.textContent=''},4000)}

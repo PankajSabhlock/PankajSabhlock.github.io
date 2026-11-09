@@ -84,18 +84,46 @@ function openPanel(){sess(true);addStyle();if(panel){panel.remove();panel=null}
  var head=el('div',{class:'sa-head'},[el('strong',{text:'Site admin'}),el('div',{class:'sa-row'},[
   el('button',{type:'button',class:'sa-btn',text:'Change password',on:{click:changePassword}}),el('button',{type:'button',class:'sa-btn',text:'Lock',title:'Close and require the password again',on:{click:function(){sess(false);hidePanel()}}}),
   el('button',{type:'button',class:'sa-btn','aria-label':'Close panel',text:'Close',on:{click:hidePanel}})])]);
- panel=el('aside',{class:'sa-panel','aria-label':'Site admin'},[head,heroSec,modeSec,panSec,slSec,kwSec,actions]);document.body.appendChild(panel);
+ panel=el('aside',{class:'sa-panel','aria-label':'Site admin'},[head,heroSec,modeSec,panSec,slSec,kwSec,drawerSec(),actions]);document.body.appendChild(panel);
  function refresh(){var c=HF.get();panel.querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',String(c[b.getAttribute('data-k')])===b.getAttribute('data-v')?'true':'false')});
   modeName.textContent=names[c.mode]||'';Object.keys(sliders).forEach(function(k){sliders[k].i.value=c[k];sliders[k].o.textContent=c[k]+sliders[k].u});
   kwOn.checked=!!c.kw;if(document.activeElement!==kwText)kwText.value=(c.words||[]).join('\n')}
  openPanel.refresh=refresh;refresh()}
 function refresh(){if(openPanel.refresh)openPanel.refresh()}
 function alertMsg(m){addStyle();var n=el('div',{class:'sa-panel',role:'status',text:m});document.body.appendChild(n);setTimeout(function(){n.remove()},3500)}
-function enter(){if(sess())openPanel();else askPassword()}
+var PRESET_KEY='siteAdminPresets',DRAWER_KEY='siteAdminDrawer',drawer=null;
+function drawerOn(){return load(DRAWER_KEY)==='1'}
+function presets(){try{return JSON.parse(load(PRESET_KEY)||'[]')||[]}catch(e){return[]}}
+function savePresets(a){store(PRESET_KEY,JSON.stringify(a))}
+function closeDrawer(){if(!drawer)return;var d=drawer;drawer=null;d.classList.add('sa-off');setTimeout(function(){d.remove()},350)}
+function openDrawer(){var HF=window.HeroFlow;if(!HF||!drawerOn())return;closeDrawer();
+ var status=el('div',{class:'sa-status','aria-live':'polite'});
+ var nameIn=el('input',{type:'text',placeholder:'Preset name','aria-label':'Preset name',maxlength:'30',class:'sa-name-in'});
+ var list=el('div',{class:'sa-presets'});
+ function say(m){status.textContent=m}
+ function render(){list.textContent='';var ps=presets();
+  if(!ps.length)list.appendChild(el('p',{class:'sa-note',text:'No presets yet. Type a name and save the current settings.'}));
+  ps.forEach(function(p,i){list.appendChild(el('div',{class:'sa-row sa-preset'},[
+   el('button',{type:'button',class:'sa-btn',text:p.name,title:'Apply '+p.name,on:{click:function(){HF.set(p.cfg);say('Applied '+p.name)}}}),
+   el('button',{type:'button',class:'sa-btn','aria-label':'Delete '+p.name,text:'Delete',on:{click:function(){var a=presets();a.splice(i,1);savePresets(a);say('Deleted '+p.name);render()}}})]))})}
+ function saveCurrent(){var name=nameIn.value.trim();if(!name){say('Type a name first.');return}
+  var a=presets().filter(function(p){return p.name!==name});a.push({name:name,cfg:HF.get()});savePresets(a);nameIn.value='';say('Saved '+name);render()}
+ nameIn.addEventListener('keydown',function(e){if(e.key==='Enter')saveCurrent()});
+ render();
+ drawer=el('aside',{class:'sa-drawer sa-off','aria-label':'Animation presets'},[
+  el('div',{class:'sa-head'},[el('strong',{text:'Animation presets'}),el('button',{type:'button',class:'sa-btn','aria-label':'Close presets',text:'Close',on:{click:closeDrawer}})]),
+  el('div',{class:'sa-row'},[nameIn,el('button',{type:'button',class:'sa-btn sa-main',text:'Save current',on:{click:saveCurrent}})]),
+  list,status]);
+ document.body.appendChild(drawer);
+ requestAnimationFrame(function(){requestAnimationFrame(function(){if(drawer)drawer.classList.remove('sa-off')})})}
+function drawerSec(){var on=drawerOn();var pb=el('button',{type:'button',class:'sa-btn',text:'Presets',on:{click:function(){if(drawer)closeDrawer();else openDrawer()}}});
+ if(!on)pb.hidden=true;
+ var tb=el('button',{type:'button',class:'sa-btn',text:'Slide drawer: '+(on?'On':'Off'),'aria-pressed':String(on),on:{click:function(){var now=!drawerOn();store(DRAWER_KEY,now?'1':'0');tb.textContent='Slide drawer: '+(now?'On':'Off');tb.setAttribute('aria-pressed',String(now));if(!now)closeDrawer();pb.hidden=!now}}});
+ return el('div',{class:'sa-sec'},[el('b',{text:'PRESETS DRAWER'}),el('div',{class:'sa-row'},[tb,pb])])}function enter(){if(sess())openPanel();else askPassword()}
 var lastOut=0;
-function hidePanel(){if(!panel)return;var p=panel;panel=null;p.classList.add('sa-off');setTimeout(function(){p.remove()},350)}
+function hidePanel(){closeDrawer();if(!panel)return;var p=panel;panel=null;p.classList.add('sa-off');setTimeout(function(){p.remove()},350)}
 function togglePanel(){if(panel){hidePanel()}else{enter()}}
-document.addEventListener('click',function(e){var t=e.target;if(!panel||!t||!t.closest)return;if(t.closest('.sa-panel')||t.closest('#admin-open')||t.closest('.sa-modal'))return;var now=Date.now();if(now-lastOut<700){lastOut=0;hidePanel()}else{lastOut=now}});
+document.addEventListener('click',function(e){var t=e.target;if(!panel||!t||!t.closest)return;if(t.closest('.sa-panel')||t.closest('#admin-open')||t.closest('.sa-modal')||t.closest('.sa-drawer'))return;var now=Date.now();if(now-lastOut<700){lastOut=0;hidePanel()}else{lastOut=now}});
 
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();enter()}});
 var clicks=[],idn=document.querySelector('.identity');

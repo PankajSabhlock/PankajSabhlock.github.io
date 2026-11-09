@@ -113,3 +113,10 @@ body[data-motion="paused"] .orbit-label .orbit-icon,body[data-motion="paused"] .
 @media(max-width:880px){.admin-icon{right:72px}}
 
 .sa-panel{transition:transform .35s ease,opacity .35s ease}.sa-panel.sa-off{transform:translateX(28px);opacity:0;pointer-events:none}
+
+.sa-drawer{position:fixed;top:90px;right:400px;z-index:9997;width:min(300px,calc(100vw - 440px));max-height:calc(100vh - 110px);overflow:auto;background:#fff;color:#0f1b2d;border:1px solid #e3e8ef;border-radius:16px;box-shadow:0 18px 50px #0f1b2d29;padding:16px;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:.8rem;transition:transform .35s ease,opacity .35s ease}
+.sa-drawer.sa-off{transform:translateX(28px);opacity:0;pointer-events:none}
+.sa-drawer .sa-row{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.sa-name-in{flex:1 1 140px;font:inherit;padding:7px 10px;border:1px solid #d5dce6;border-radius:10px}
+.sa-preset{align-items:center}
+@media(max-width:820px){.sa-drawer{right:16px;top:auto;bottom:16px;width:min(300px,calc(100vw - 32px))}}

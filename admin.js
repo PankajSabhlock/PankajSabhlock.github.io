@@ -96,6 +96,7 @@ function enter(){if(sess())openPanel();else askPassword()}
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();enter()}});
 var clicks=[],idn=document.querySelector('.identity');
 if(idn)idn.addEventListener('click',function(){var now=Date.now();clicks=clicks.filter(function(t){return now-t<2000});clicks.push(now);if(clicks.length>=5){clicks=[];enter()}});
+var adminBtn=document.getElementById('admin-open');if(adminBtn)adminBtn.addEventListener('click',function(e){e.preventDefault();enter()});
 function fromHash(){if(location.hash==='#admin'){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}enter()}}
 window.addEventListener('hashchange',fromHash);
 document.addEventListener('heroflow:ready',function(){if(sess())openPanel();fromHash()});

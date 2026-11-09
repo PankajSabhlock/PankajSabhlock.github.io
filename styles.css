@@ -106,7 +106,7 @@ body[data-motion="paused"] .orbit-label .orbit-icon,body[data-motion="paused"] .
 .admin-icon{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;border:1px solid #d5dce6;background:#fff;color:#0f1b2d;margin-left:auto;margin-right:14px;text-decoration:none;flex:0 0 auto}.admin-icon:hover,.admin-icon:focus-visible{background:#0f1b2d;color:#fff;border-color:#0f1b2d;outline:none}
 
 /* Header: space after name; admin icon pinned to the far right */
-.site-header{position:relative}
+.admin-icon{z-index:31}
 .desktop-nav{margin-left:40px}
 .admin-icon{position:absolute;right:28px;top:50%;transform:translateY(-50%);margin:0;cursor:pointer}
 @media(max-width:1050px){.desktop-nav{margin-left:28px}}

@@ -118,18 +118,25 @@ function openDrawer(){var HF=window.HeroFlow;if(!HF||!drawerOn())return;closeDra
  requestAnimationFrame(function(){requestAnimationFrame(function(){if(drawer)drawer.classList.remove('sa-off')})})}
 function drawerSec(){var on=drawerOn();var pb=el('button',{type:'button',class:'sa-btn',text:'Presets',on:{click:function(){if(drawer)closeDrawer();else openDrawer()}}});
  if(!on)pb.hidden=true;
- var tb=el('button',{type:'button',class:'sa-btn',text:'Slide drawer: '+(on?'On':'Off'),'aria-pressed':String(on),on:{click:function(){var now=!drawerOn();store(DRAWER_KEY,now?'1':'0');tb.textContent='Slide drawer: '+(now?'On':'Off');tb.setAttribute('aria-pressed',String(now));if(!now)closeDrawer();pb.hidden=!now}}});
+ var tb=el('button',{type:'button',class:'sa-btn',text:'Slide drawer: '+(on?'On':'Off'),'aria-pressed':String(on),on:{click:function(){var now=!drawerOn();store(DRAWER_KEY,now?'1':'0');tb.textContent='Slide drawer: '+(now?'On':'Off');tb.setAttribute('aria-pressed',String(now));if(!now)closeDrawer();pb.hidden=!now;updatePresetsIcon()}}});
  return el('div',{class:'sa-sec'},[el('b',{text:'PRESETS DRAWER'}),el('div',{class:'sa-row'},[tb,pb])])}function enter(){if(sess())openPanel();else askPassword()}
 var lastOut=0;
-function hidePanel(){closeDrawer();if(!panel)return;var p=panel;panel=null;p.classList.add('sa-off');setTimeout(function(){p.remove()},350)}
+function hidePanel(){if(!panel)return;var p=panel;panel=null;p.classList.add('sa-off');setTimeout(function(){p.remove()},350)}
 function togglePanel(){if(panel){hidePanel()}else{enter()}}
-document.addEventListener('click',function(e){var t=e.target;if(!panel||!t||!t.closest)return;if(t.closest('.sa-panel')||t.closest('#admin-open')||t.closest('.sa-modal')||t.closest('.sa-drawer'))return;var now=Date.now();if(now-lastOut<700){lastOut=0;hidePanel()}else{lastOut=now}});
+document.addEventListener('click',function(e){var t=e.target;if(!t||!t.closest)return;if(!panel&&!drawer)return;if(t.closest('.sa-panel')||t.closest('#admin-open')||t.closest('#presets-open')||t.closest('.sa-modal')||t.closest('.sa-drawer'))return;var now=Date.now();if(now-lastOut<700){lastOut=0;if(panel)hidePanel();if(drawer)closeDrawer()}else{lastOut=now}});
 
 document.addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.shiftKey&&(e.key==='A'||e.key==='a')){e.preventDefault();enter()}});
 var clicks=[],idn=document.querySelector('.identity');
 if(idn)idn.addEventListener('click',function(){var now=Date.now();clicks=clicks.filter(function(t){return now-t<2000});clicks.push(now);if(clicks.length>=5){clicks=[];enter()}});
 document.addEventListener('click',function(e){var b=e.target&&e.target.closest?e.target.closest('#admin-open'):null;if(b){e.preventDefault();togglePanel()}});
-function fromHash(){if(location.hash==='#admin'){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}enter()}}
+function updatePresetsIcon(){var b=document.getElementById('presets-open');if(b)b.hidden=!drawerOn()}
+function toggleDrawer(){if(drawer){closeDrawer();return}if(!sess()){enter();return}openDrawer()}
+function ensurePresetsIcon(){var h=document.querySelector('.site-header');if(!h||document.getElementById('presets-open'))return;
+ var b=document.createElement('button');b.type='button';b.id='presets-open';b.className='admin-icon presets-icon';b.setAttribute('aria-label','Animation presets (owner only)');b.title='Animation presets';
+ b.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true" focusable="false"><path fill="currentColor" d="M4 5h16v3H4zm0 5h10v3H4zm0 5h16v3H4zm13-6h3v3h-3zm0 5h3v3h-3z"/></svg>';
+ b.hidden=!drawerOn();h.appendChild(b);
+ document.addEventListener('click',function(e){var p=e.target&&e.target.closest?e.target.closest('#presets-open'):null;if(p){e.preventDefault();toggleDrawer()}})}
+ensurePresetsIcon();function fromHash(){if(location.hash==='#admin'){try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}enter()}}
 window.addEventListener('hashchange',fromHash);
 document.addEventListener('heroflow:ready',function(){fromHash()});
 if(window.HeroFlow&&document.readyState!=='loading'){fromHash()}

@@ -16,8 +16,6 @@ Repository intended for this website: **PankajSabhlock/PankajSabhlock.github.io*
 - `styles.css`: responsive styling, transitions and 3D icon presentation.
 - `site.js`: stories, filters, sticky titles and motion controls.
 - `portrait.png`, `award-photo.jpg`, `assets/`: website images and icon licence.
-- `Current-Version_2026-10-05/`: an explicit copy of this release.
-- `Obsolete/`: reserved for superseded releases.
 
 Animations respect reduced-motion settings and can be paused. Contact buttons open email or LinkedIn; this site has no form submission service or server-side runtime.
 

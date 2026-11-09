@@ -97,7 +97,7 @@
   const navTargets = new Set(navLinks.map(link => link.hash.slice(1)));
   const navSections = Array.from(document.querySelectorAll('main > section[id]')).filter(section => navTargets.has(section.id));
   const setActiveNav = id => navLinks.forEach(link => {
-    const target = link.closest('.desktop-nav') && id === 'learning' ? 'credentials' : id;
+    const target = id;
     if (link.hash === `#${target}`) link.setAttribute('aria-current', 'location');
     else link.removeAttribute('aria-current');
   });

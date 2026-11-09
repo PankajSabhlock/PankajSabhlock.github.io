@@ -5,6 +5,7 @@
    download the settings file and replace hero-config.json in the repository. */
 (function(){
 var HASH_KEY='siteAdminHash',SESSION_KEY='siteAdminOn',panel=null,modal=null;
+var DEFAULT_PW='JaiMataDi';
 function store(k,v){try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);return true}catch(e){return false}}
 function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function sess(v){try{if(v===undefined)return sessionStorage.getItem(SESSION_KEY)==='1';v?sessionStorage.setItem(SESSION_KEY,'1'):sessionStorage.removeItem(SESSION_KEY)}catch(e){return false}}
@@ -24,22 +25,38 @@ var css='.sa-modal{position:fixed;inset:0;z-index:9999;background:rgba(15,27,45,
 function addStyle(){if(document.getElementById('sa-style'))return;var s=el('style',{id:'sa-style'});s.textContent=css;document.head.appendChild(s)}
 
 function closeModal(){if(modal){modal.remove();modal=null}}
-function askPassword(){addStyle();if(modal)return;var stored=load(HASH_KEY),first=!stored;
- var p1=el('input',{type:'password',placeholder:first?'New password':'Password','aria-label':'Password',autocomplete:first?'new-password':'current-password'}),
-     p2=first?el('input',{type:'password',placeholder:'Repeat password','aria-label':'Repeat password',autocomplete:'new-password'}):null,
-     err=el('div',{class:'sa-err'});
- function submit(){var a=p1.value;if(a.length<6){err.textContent='Use at least 6 characters.';return}
-  if(first&&a!==p2.value){err.textContent='The two passwords do not match.';return}
-  hashText(a).then(function(h){if(first){if(!store(HASH_KEY,h)){err.textContent='This browser blocks storage, so admin cannot be saved here.';return}openPanel();closeModal()}
-   else if(h===stored){openPanel();closeModal()}else{err.textContent='Wrong password.';p1.value='';p1.focus()}})
-  .catch(function(){err.textContent='Could not check the password in this browser.'})}
- [p1,p2].forEach(function(i){if(i)i.addEventListener('keydown',function(e){if(e.key==='Enter')submit();if(e.key==='Escape')closeModal()})});
- modal=el('div',{class:'sa-modal',role:'dialog','aria-modal':'true','aria-label':'Admin sign in'},[el('div',{class:'sa-card'},[
-  el('h3',{text:first?'Set admin password':'Admin'}),
-  el('p',{text:first?'Pick a password for this browser. Only a hash is kept here. Clearing site data resets it.':'Enter your admin password.'}),
-  p1,p2,err,el('div',{class:'sa-row'},[el('button',{type:'button',class:'sa-btn sa-main',text:first?'Save and open':'Open',on:{click:submit}}),el('button',{type:'button',class:'sa-btn',text:'Cancel',on:{click:closeModal}})])])]);
- modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});document.body.appendChild(modal);p1.focus()}
+function askPassword(){addStyle();if(modal)return;
+  var p1=el('input',{type:'password',placeholder:'Password','aria-label':'Password',autocomplete:'current-password'}),
+      err=el('div',{class:'sa-err'});
+  function submit(){var a=p1.value;if(!a){err.textContent='Enter the password.';return}
+   hashText(a).then(function(h){var stored=load(HASH_KEY);var ok=stored?h===stored:a===DEFAULT_PW;
+    if(!ok){err.textContent='Wrong password.';p1.value='';p1.focus();return}
+    if(!stored){store(HASH_KEY,h)}
+    openPanel();closeModal()})
+   .catch(function(){err.textContent='Could not check the password in this browser.'})}
+  p1.addEventListener('keydown',function(e){if(e.key==='Enter')submit();if(e.key==='Escape')closeModal()});
+  modal=el('div',{class:'sa-modal',role:'dialog','aria-modal':'true','aria-label':'Admin sign in'},[el('div',{class:'sa-card'},[
+   el('h3',{text:'Admin'}),
+   el('p',{text:'Enter your admin password. The default is set by the owner; you can change it in the admin panel.'}),
+   p1,err,el('div',{class:'sa-row'},[el('button',{type:'button',class:'sa-btn sa-main',text:'Open',on:{click:submit}}),el('button',{type:'button',class:'sa-btn',text:'Cancel',on:{click:closeModal}})])])]);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});document.body.appendChild(modal);p1.focus()}
 
+function changePassword(){addStyle();if(modal)return;
+  var cur=el('input',{type:'password',placeholder:'Current password','aria-label':'Current password',autocomplete:'current-password'}),
+      n1=el('input',{type:'password',placeholder:'New password (6+ characters)','aria-label':'New password',autocomplete:'new-password'}),
+      n2=el('input',{type:'password',placeholder:'Repeat new password','aria-label':'Repeat new password',autocomplete:'new-password'}),
+      err=el('div',{class:'sa-err'});
+  function save(){var stored=load(HASH_KEY);
+   if(n1.value.length<6){err.textContent='Use at least 6 characters.';return}
+   if(n1.value!==n2.value){err.textContent='The new passwords do not match.';return}
+   hashText(cur.value).then(function(h){var ok=stored?h===stored:cur.value===DEFAULT_PW;
+    if(!ok){err.textContent='Current password is wrong.';return}
+    return hashText(n1.value).then(function(nh){if(!store(HASH_KEY,nh)){err.textContent='This browser blocks storage.';return}closeModal();alertMsg('Password changed.')})})
+   .catch(function(){err.textContent='Could not change the password here.'})}
+  modal=el('div',{class:'sa-modal',role:'dialog','aria-modal':'true','aria-label':'Change admin password'},[el('div',{class:'sa-card'},[
+   el('h3',{text:'Change admin password'}),cur,n1,n2,err,
+   el('div',{class:'sa-row'},[el('button',{type:'button',class:'sa-btn sa-main',text:'Save',on:{click:save}}),el('button',{type:'button',class:'sa-btn',text:'Cancel',on:{click:closeModal}})])])]);
+  modal.addEventListener('click',function(e){if(e.target===modal)closeModal()});document.body.appendChild(modal);cur.focus()}
 function openPanel(){sess(true);addStyle();if(panel){panel.hidden=false;refresh();return}
  var HF=window.HeroFlow;if(!HF){alertMsg('The hero animation is not loaded on this page.');return}
  var status=el('div',{class:'sa-status','aria-live':'polite'});
@@ -65,7 +82,7 @@ function openPanel(){sess(true);addStyle();if(panel){panel.hidden=false;refresh(
   el('button',{type:'button',class:'sa-btn',text:'Reset to site settings',on:{click:function(){HF.clearLocal();refresh();say('Back to the published settings.')}}})]),
   el('p',{class:'sa-note',text:'Changes show only on this browser. Visitors see hero-config.json from GitHub.'}),status]);
  var head=el('div',{class:'sa-head'},[el('strong',{text:'Site admin'}),el('div',{class:'sa-row'},[
-  el('button',{type:'button',class:'sa-btn',text:'Lock',title:'Close and require the password again',on:{click:function(){sess(false);panel.hidden=true}}}),
+  el('button',{type:'button',class:'sa-btn',text:'Change password',on:{click:changePassword}}),el('button',{type:'button',class:'sa-btn',text:'Lock',title:'Close and require the password again',on:{click:function(){sess(false);panel.hidden=true}}}),
   el('button',{type:'button',class:'sa-btn','aria-label':'Close panel',text:'Close',on:{click:function(){panel.hidden=true}}})])]);
  panel=el('aside',{class:'sa-panel','aria-label':'Site admin'},[head,heroSec,modeSec,panSec,slSec,kwSec,actions]);document.body.appendChild(panel);
  function refresh(){var c=HF.get();panel.querySelectorAll('[data-k]').forEach(function(b){b.setAttribute('aria-pressed',String(c[b.getAttribute('data-k')])===b.getAttribute('data-v')?'true':'false')});

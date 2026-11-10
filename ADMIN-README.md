@@ -5,6 +5,7 @@ Owner-only admin panel for pankajsabhlock.github.io.
 ## Opening and closing
 - The panel is hidden when the site loads.
 - Click the gear icon at the top right to show it. Click the gear again to hide it.
+- This is the only header settings icon. Animation settings and the Presets controls are accessed from inside Site Admin.
 - Or press Ctrl+Shift+A (Cmd+Shift+A on a Mac).
 - Or click your name in the header five times quickly.
 - Or add #admin to the end of the web address.

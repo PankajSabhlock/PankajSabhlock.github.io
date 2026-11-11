@@ -32,6 +32,39 @@
   menu.addEventListener('click', () => { const open = menu.getAttribute('aria-expanded') === 'true'; menu.setAttribute('aria-expanded', String(!open)); menu.setAttribute('aria-label', open ? 'Open menu' : 'Close menu'); mobileNav.hidden = open; });
   mobileNav.querySelectorAll('a').forEach(link => link.addEventListener('click', closeMenu));
   document.addEventListener('keydown', event => { if (event.key === 'Escape' && !mobileNav.hidden) {closeMenu();menu.focus();} });
+  const navGroups = [...document.querySelectorAll('.nav-group')];
+  const closeNavGroups = except => navGroups.forEach(group => {
+    if (group !== except) {
+      group.classList.remove('open');
+      group.querySelector('.nav-group-btn')?.setAttribute('aria-expanded', 'false');
+    }
+  });
+  navGroups.forEach(group => {
+    const button = group.querySelector('.nav-group-btn');
+    if (!button) return;
+    button.setAttribute('aria-haspopup', 'true');
+    button.setAttribute('aria-expanded', 'false');
+    button.addEventListener('click', event => {
+      event.stopPropagation();
+      const open = group.classList.contains('open');
+      closeNavGroups(open ? group : null);
+      button.setAttribute('aria-expanded', String(open));
+    });
+    group.querySelectorAll('.nav-group-menu a').forEach(link => link.addEventListener('click', () => {
+      group.classList.remove('open');
+      button.setAttribute('aria-expanded', 'false');
+    }));
+  });
+  document.addEventListener('click', () => closeNavGroups(null));
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      const openGroup = navGroups.find(group => group.classList.contains('open'));
+      if (openGroup) {
+        closeNavGroups(null);
+        openGroup.querySelector('.nav-group-btn')?.focus();
+      }
+    }
+  });
   const achievementCards = [...document.querySelectorAll('.impact-card')];
   const moreStories = document.querySelector('.more-stories');
   let achievementFilter = 'all', allStoriesExpanded = false;

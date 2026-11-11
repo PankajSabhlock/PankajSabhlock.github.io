@@ -9,6 +9,10 @@
   --radius: 18px;
 }
 
+.site-header {
+  z-index: 50;
+}
+
 body {
   background: var(--paper);
   color: var(--ink);
@@ -42,6 +46,73 @@ h3,
 .expertise-item h3,
 .impact-card h3,
 .lab-line {
+  color: var(--ink);
+}
+
+.impact-card {
+  background: #12223b;
+}
+
+.impact-card:hover,
+.impact-card:focus-within,
+.impact-card.story-selected {
+  background: #1a3152;
+  border-color: #5578a8;
+  box-shadow: 0 16px 42px rgba(0, 0, 0, .24);
+}
+
+.impact-card-wide {
+  background: #1b3558;
+  border-color: #7fa8e8;
+}
+
+.impact-card-wide:hover,
+.impact-card-wide:focus-within,
+.impact-card-wide.story-selected {
+  background: #1a3152;
+  border-color: #5578a8;
+}
+
+.story-button {
+  border-top-color: var(--line);
+}
+
+.speaking-item {
+  background: #12223b;
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.speaking-feature,
+.tlc-panel {
+  background: #1b3558;
+  border-color: #5578a8;
+}
+
+.speaking-label {
+  color: #91a8c8;
+}
+
+.speaking-item p {
+  color: var(--muted);
+}
+
+.speaking-context {
+  color: #79c8c4;
+  border-top-color: var(--line);
+}
+
+.tlc-panel .tlc-credit {
+  color: #79c8c4;
+}
+
+.tlc-questions li {
+  background: #12223b;
+  border-color: #365273;
+  color: var(--muted);
+}
+
+.tlc-questions strong {
   color: var(--ink);
 }
 
@@ -170,6 +241,65 @@ h3,
   border-color: #d7e4f6;
 }
 
+:root[data-theme="light"] .impact-card {
+  background: var(--wash);
+}
+
+:root[data-theme="light"] .impact-card:hover,
+:root[data-theme="light"] .impact-card:focus-within,
+:root[data-theme="light"] .impact-card.story-selected {
+  background: #e8f4f7;
+  border-color: #b8dce4;
+  box-shadow: 0 12px 35px #143e6610;
+}
+
+:root[data-theme="light"] .impact-card-wide {
+  background: #e5f0ff;
+  border-color: #bdd4f3;
+}
+
+:root[data-theme="light"] .impact-card-wide:hover,
+:root[data-theme="light"] .impact-card-wide:focus-within,
+:root[data-theme="light"] .impact-card-wide.story-selected {
+  background: #e8f4f7;
+  border-color: #b8dce4;
+}
+
+:root[data-theme="light"] .speaking-item {
+  background: #fff;
+  border-color: #e3e9f1;
+  color: var(--ink);
+}
+
+:root[data-theme="light"] .speaking-feature,
+:root[data-theme="light"] .tlc-panel {
+  background: #eef7f7;
+  border-color: #d7e9e9;
+}
+
+:root[data-theme="light"] .speaking-label {
+  color: #46657d;
+}
+
+:root[data-theme="light"] .speaking-context {
+  color: #477774;
+  border-top-color: #dce9e8;
+}
+
+:root[data-theme="light"] .tlc-panel .tlc-credit {
+  color: #477774;
+}
+
+:root[data-theme="light"] .tlc-questions li {
+  background: #fff;
+  border-color: #d7e9e9;
+  color: var(--muted);
+}
+
+:root[data-theme="light"] .tlc-questions strong {
+  color: var(--ink);
+}
+
 :root[data-theme="light"] .experience-strip div > span {
   color: #5a6370;
 }
@@ -272,6 +402,26 @@ h3,
 .source-section p a,
 .email-address:hover,
 .desktop-nav a[aria-current="location"] {
+  color: var(--blue);
+}
+
+:root[data-theme="dark"] .nav-group-menu {
+  background: #12223b;
+  border-color: #365273;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .28);
+}
+
+:root[data-theme="dark"] .nav-group-menu a {
+  color: var(--ink);
+}
+
+:root[data-theme="dark"] .nav-group-menu a:hover {
+  background: #1a3152;
+  color: var(--blue);
+}
+
+:root[data-theme="dark"] .nav-group-menu a[aria-current="location"] {
+  background: #1b3558;
   color: var(--blue);
 }
 

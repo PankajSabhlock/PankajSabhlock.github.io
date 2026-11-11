@@ -1,5 +1,30 @@
 (() => {
   'use strict';
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = window.localStorage.getItem('portfolio-theme');
+  const systemTheme = window.matchMedia('(prefers-color-scheme: light)');
+  const hasSavedTheme = savedTheme === 'light' || savedTheme === 'dark';
+  let followSystem = !hasSavedTheme;
+  const setTheme = theme => {
+    const isLight = theme === 'light';
+    document.documentElement.dataset.theme = isLight ? 'light' : 'dark';
+    if (themeToggle) {
+      themeToggle.setAttribute('aria-label', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+      themeToggle.setAttribute('title', isLight ? 'Switch to dark mode' : 'Switch to light mode');
+      themeToggle.setAttribute('aria-pressed', String(isLight));
+    }
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', isLight ? '#ffffff' : '#0f1b33');
+  };
+  setTheme(hasSavedTheme ? savedTheme : (systemTheme.matches ? 'light' : 'dark'));
+  systemTheme.addEventListener?.('change', event => {
+    if (followSystem) setTheme(event.matches ? 'light' : 'dark');
+  });
+  themeToggle?.addEventListener('click', () => {
+    const nextTheme = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+    followSystem = false;
+    window.localStorage.setItem('portfolio-theme', nextTheme);
+    setTheme(nextTheme);
+  });
   const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
   const menu = document.querySelector('.menu-toggle');
   const mobileNav = document.getElementById('mobile-nav');

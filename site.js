@@ -211,8 +211,7 @@
   // A geometric infographic: three flowing information streams orbit human purpose.
   const canvas=document.getElementById('intelligence-canvas');
   const ctx=canvas.getContext('2d');
-  const motionButton=document.querySelector('.motion-toggle');
-  if (!ctx) {motionButton.hidden=true;return;}
+  if (!ctx) return;
   let width=0,height=0,frame=0,time=0,last=0,visible=true,paused=motionPreference.matches;
   const point=(angle,ring)=>{const radius=Math.min(width,height)*.375;const tilt=[-.52,.5,1.42][ring];const x=Math.cos(angle)*radius,y=Math.sin(angle)*radius*.53;return{x:width*.5+x*Math.cos(tilt)-y*Math.sin(tilt),y:height*.49+x*Math.sin(tilt)+y*Math.cos(tilt)};};
   const palette=['#0866dc','#088d93','#087c9f'];
@@ -228,8 +227,8 @@
   };
   const resize=()=>{const rect=canvas.getBoundingClientRect();width=rect.width;height=rect.height;const dpr=Math.min(window.devicePixelRatio||1,2);canvas.width=Math.round(width*dpr);canvas.height=Math.round(height*dpr);ctx.setTransform(dpr,0,0,dpr,0,0);draw();};
   const loop=timestamp=>{if(paused||!visible||document.hidden){frame=0;last=0;return;}if(!last)last=timestamp;time+=Math.min((timestamp-last)/1000,.05);last=timestamp;draw();frame=requestAnimationFrame(loop);};
-  const sync=()=>{if(frame){cancelAnimationFrame(frame);frame=0;}last=0;document.body.dataset.motion=paused||document.hidden?'paused':'running';motionButton.textContent=paused?'Play animation':'Pause animation';motionButton.title=paused?'Play decorative animations':'Pause decorative animations';motionButton.setAttribute('aria-pressed',String(paused));if(!paused&&visible&&!document.hidden)frame=requestAnimationFrame(loop);else draw();};
-  motionButton.addEventListener('click',()=>{paused=!paused;sync();});
+  const sync=()=>{if(frame){cancelAnimationFrame(frame);frame=0;}last=0;document.body.dataset.motion=paused||document.hidden?'paused':'running';document.querySelectorAll('.motion-toggle').forEach(button=>{button.textContent=paused?'Play animation':'Pause animation';button.title=paused?'Play decorative animations':'Pause decorative animations';button.setAttribute('aria-pressed',String(paused));});if(!paused&&visible&&!document.hidden)frame=requestAnimationFrame(loop);else draw();};
+  document.addEventListener('click',event=>{if(event.target.closest('.motion-toggle')){paused=!paused;sync();}});
   motionPreference.addEventListener('change',()=>{paused=motionPreference.matches;sync();});
   document.addEventListener('visibilitychange',sync);
   new ResizeObserver(resize).observe(canvas);

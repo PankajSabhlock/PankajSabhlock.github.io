@@ -15,9 +15,13 @@ var HF_CFG=JSON.parse(JSON.stringify(DEFAULTS)),FILE_CFG={};
 var W=0,H=0,dpr=1,t=0,last=0,mode=11,mouse={x:-999,y:-999,a:0},bursts=[],bt=0,visible=true,drawnPaused=false,ready=false,VB={x:0,y:0,w:0,h:0};
 var reduce=window.matchMedia('(prefers-reduced-motion: reduce)');
 var COL=['8,102,220','8,141,147','23,129,87'];
+var lightBoost=1;
+function syncTheme(){lightBoost=document.documentElement.dataset.theme==='light'?1.1:1}
+syncTheme();
+new MutationObserver(syncTheme).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 function rnd(a,b){return a+Math.random()*(b-a)}
 function pick(){return COL[Math.floor(Math.random()*3)]}
-function dot(x,y,r,col,a){if(r<=0||a<=0)return;ctx.fillStyle='rgba('+col+','+a+')';ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fill()}
+function dot(x,y,r,col,a){if(r<=0||a<=0)return;a=Math.min(1,a*lightBoost);ctx.fillStyle='rgba('+col+','+a+')';ctx.beginPath();ctx.arc(x,y,r,0,6.2832);ctx.fill()}
 function warp(x,y){if(mouse.a>.02){var dx=x-mouse.x,dy=y-mouse.y,d=Math.hypot(dx,dy);if(d<200&&d>1){var k=1-d/200;k=k*k*60*mouse.a;x+=dx/d*k;y+=dy/d*k}}return[x,y]}
 var S={};
 /* ---------- one BI visual, six selectable styles ---------- */
@@ -41,7 +45,7 @@ function slot(i){var g=geo(),c=P.c[i],p=g.p,vl=val(c,g);
  return{x:barX(i,g),y:stackMode()?g.base-6-c.st*(CFG.gran+2):g.base-c.v*g.ih}}
 function land(i){var c=P.c[i],g=geo();c.fl=1;if(stackMode())c.st=Math.min(capFor(g),c.st+1);else c.v=Math.min(1,c.v+.07)}
 function hash(x,y){var n=Math.sin(x*12.9898+y*78.233)*43758.5453;return n-Math.floor(n)}
-function px(x,y,sz,col,a){if(a<=0)return;ctx.fillStyle='rgba('+col+','+a+')';ctx.fillRect(Math.round(x),Math.round(y),sz,sz)}
+function px(x,y,sz,col,a){if(a<=0)return;a=Math.min(1,a*lightBoost);ctx.fillStyle='rgba('+col+','+a+')';ctx.fillRect(Math.round(x),Math.round(y),sz,sz)}
 function dLine(g,pt,sq,n){for(var k=1;k<=n;k++){var y=g.base-g.ih*k/n;for(var x=g.bx;x<g.bx+g.iw;x+=pt*3)px(x,y,Math.max(1,sq-2),'8,102,220',.12)}}
 function dBars(g,pt,sq,tw){var st=stackMode(),nx=Math.max(1,Math.floor(g.bs*(g.bw||.62)/pt)),i;
  for(i=0;i<NB;i++){var c=P.c[i],col=COL[i%3],left=barX(i,g)-nx*pt/2;

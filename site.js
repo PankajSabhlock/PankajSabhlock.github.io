@@ -103,7 +103,9 @@
   const allowMotion = () => !motionPreference.matches && document.body.dataset.motion !== 'paused';
   const signatureWords = text => text.replace(/\b(intelligence|impact)\b/g, word => word.charAt(0).toUpperCase() + word.slice(1));
   const element = (tag, className, text) => { const node = document.createElement(tag); if (className) node.className = className; if (text !== undefined) { const value=signatureWords(text); const pattern=/((?<!\w)(?:3,600|950|200|700\+|80\+|12\+|93%|34%|18%|30%|22%|100%|80%|122|40)(?!\w))/g; let last=0; for(const match of value.matchAll(pattern)){node.append(document.createTextNode(value.slice(last,match.index)));const accent=document.createElement('span');accent.className='number-highlight';accent.textContent=match[0];node.append(accent);last=match.index+match[0].length;}node.append(document.createTextNode(value.slice(last))); } return node; };
-  document.querySelectorAll('[data-story]').forEach(button => button.addEventListener('click', () => {
+  document.querySelectorAll('[data-story]').forEach(button => button.addEventListener('click', event => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button > 0) return;
+    event.preventDefault();
     const story = stories[button.dataset.story];
     returnFocus = button;
     selectedCard?.classList.remove('story-selected');
@@ -111,6 +113,7 @@
     selectedCard?.classList.add('story-selected');
     button.setAttribute('aria-expanded', 'true');
     document.getElementById('story-category').textContent = story.category;
+    const pageLink = document.getElementById('story-page-link'); if (pageLink) pageLink.href = 'stories/' + button.dataset.story + '/';
     document.getElementById('story-title').textContent = signatureWords(story.title);
     document.getElementById('story-context').textContent = story.context;
     const body = document.getElementById('story-body'); body.replaceChildren();

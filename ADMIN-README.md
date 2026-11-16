@@ -4,17 +4,17 @@ Owner-only admin panel for pankajsabhlock.github.io.
 
 ## Opening and closing
 - The panel is hidden when the site loads.
-- Click the gear icon at the top right to show it. Click the gear again to hide it.
-- This is the only header settings icon. Animation settings and the Presets controls are accessed from inside Site Admin.
-- Or press Ctrl+Shift+A (Cmd+Shift+A on a Mac).
+- There is no visible admin button. Visitors never see one.
+- Press Ctrl+Shift+A (Cmd+Shift+A on a Mac).
 - Or click your name in the header five times quickly.
 - Or add #admin to the end of the web address.
 - Two quick clicks outside the panel slide it away to the right. One click outside does nothing.
 - The Close button and the Lock button also hide the panel.
+- A new browser or a cleared browser has no saved password, so it asks you to choose one again.
 
 ## Signing in
-- Default password: JaiMataDi. Type it and click Open (or press Enter).
-- Click Change password in the panel to set your own. You need the current password first.
+- There is no default password in the code. The first time you open admin in a browser, you choose a password (8 or more characters).
+- Click Change password in the panel to set a new one. You need the current password first.
 - Clicking outside the sign-in box does not close it. Use Cancel or Escape.
 - The password is stored only as a hash in each browser.
 
@@ -28,7 +28,7 @@ Owner-only admin panel for pankajsabhlock.github.io.
 
 ## Limits
 - Changes show only in the browser where you made them.
-- The password hides the panel from casual visitors. It is not security. The default is visible in the page source, so change it.
+- The password only hides the panel from casual visitors. It is not security, and anyone can set their own password in their own browser, but their changes never reach the live site.
 - Visitors see whatever is in hero-config.json in the repository.
 
 ## Publish a choice for everyone
@@ -42,5 +42,5 @@ Owner-only admin panel for pankajsabhlock.github.io.
 - admin.js: the admin panel.
 - hero-config.json: the settings visitors see.
 - hero-flow.js: the animation engine.
-- index.html: the page and the gear icon.
-- styles.css: the page styles, including the gear and panel slide.
+- index.html: the page.
+- styles.css: the page styles, including the panel slide.

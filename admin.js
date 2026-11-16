@@ -5,7 +5,6 @@
    download the settings file and replace hero-config.json in the repository. */
 (function(){
 var HASH_KEY='siteAdminHash',SESSION_KEY='siteAdminOn',panel=null,modal=null;
-var DEFAULT_PW='JaiMataDi';
 function store(k,v){try{v===null?localStorage.removeItem(k):localStorage.setItem(k,v);return true}catch(e){return false}}
 function load(k){try{return localStorage.getItem(k)}catch(e){return null}}
 function sess(v){try{if(v===undefined)return sessionStorage.getItem(SESSION_KEY)==='1';v?sessionStorage.setItem(SESSION_KEY,'1'):sessionStorage.removeItem(SESSION_KEY)}catch(e){return false}}
@@ -30,27 +29,29 @@ function askPassword(){addStyle();if(modal)return;
   var p1=el('input',{type:'password',placeholder:'Password','aria-label':'Password',autocomplete:'current-password'}),
       err=el('div',{class:'sa-err'});
   function submit(){var a=p1.value;if(!a){err.textContent='Enter the password.';return}
-   hashText(a).then(function(h){var stored=load(HASH_KEY);var ok=stored?h===stored:a===DEFAULT_PW;
-    if(!ok){err.textContent='Wrong password.';p1.value='';p1.focus();return}
-    if(!stored){store(HASH_KEY,h)}
+   hashText(a).then(function(h){var stored=load(HASH_KEY);
+    if(!stored){if(a.length<8){err.textContent='Choose a password of 8 or more characters.';return}
+     if(!store(HASH_KEY,h)){err.textContent='This browser blocks storage.';return}
+     openPanel();closeModal();return}
+    if(h!==stored){err.textContent='Wrong password.';p1.value='';p1.focus();return}
     openPanel();closeModal()})
    .catch(function(e){err.textContent='Could not open the panel: '+(e&&e.message?e.message:String(e))})}
   p1.addEventListener('keydown',function(e){if(e.key==='Enter')submit();if(e.key==='Escape')closeModal()});
   modal=el('div',{class:'sa-modal',role:'dialog','aria-modal':'true','aria-label':'Admin sign in'},[el('div',{class:'sa-card'},[
    el('h3',{text:'Admin'}),
-   el('p',{text:'Enter your admin password. The default is set by the owner; you can change it in the admin panel.'}),
+   el('p',{text:load(HASH_KEY)?'Enter your admin password.':'First use on this browser: choose an admin password (8 or more characters). It is stored only here, as a hash.'}),
    p1,err,el('div',{class:'sa-row'},[el('button',{type:'button',class:'sa-btn sa-main',text:'Open',on:{click:submit}}),el('button',{type:'button',class:'sa-btn',text:'Cancel',on:{click:closeModal}})])])]);
 document.body.appendChild(modal);p1.focus()}
 
 function changePassword(){addStyle();if(modal)return;
   var cur=el('input',{type:'password',placeholder:'Current password','aria-label':'Current password',autocomplete:'current-password'}),
-      n1=el('input',{type:'password',placeholder:'New password (6+ characters)','aria-label':'New password',autocomplete:'new-password'}),
+      n1=el('input',{type:'password',placeholder:'New password (8+ characters)','aria-label':'New password',autocomplete:'new-password'}),
       n2=el('input',{type:'password',placeholder:'Repeat new password','aria-label':'Repeat new password',autocomplete:'new-password'}),
       err=el('div',{class:'sa-err'});
   function save(){var stored=load(HASH_KEY);
-   if(n1.value.length<6){err.textContent='Use at least 6 characters.';return}
+   if(n1.value.length<8){err.textContent='Use at least 8 characters.';return}
    if(n1.value!==n2.value){err.textContent='The new passwords do not match.';return}
-   hashText(cur.value).then(function(h){var ok=stored?h===stored:cur.value===DEFAULT_PW;
+   hashText(cur.value).then(function(h){var ok=stored?h===stored:true;
     if(!ok){err.textContent='Current password is wrong.';return}
     return hashText(n1.value).then(function(nh){if(!store(HASH_KEY,nh)){err.textContent='This browser blocks storage.';return}closeModal();alertMsg('Password changed.')})})
    .catch(function(){err.textContent='Could not change the password here.'})}

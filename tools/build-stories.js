@@ -9,6 +9,11 @@
   Output:                         stories/<id>/index.html, sitemap.xml, robots.txt
 */
 'use strict';
+// Any failed read, write or parse stops the build with one clear line and a non-zero exit code.
+process.on('uncaughtException', err => {
+  console.error('build-stories failed: ' + err.message);
+  process.exit(1);
+});
 const fs = require('fs');
 const path = require('path');
 

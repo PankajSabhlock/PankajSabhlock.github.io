@@ -1,0 +1,1595 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Portfolio Lab (local preview)</title>
+<style>
+:root{--page:#f5f7fa;--paper:#fff;--wash:#f5f7fa;--ink:#17202e;--muted:#5c6675;--blue:#0866dc;--line:#e1e6ed;--sel:#0d1b32;--selink:#fff;--cv1:#fbfcfe;--cv2:#f3f6fb;--shadow:0 1px 2px rgba(13,27,50,.04);--radius:25px;--font:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color-scheme:light}
+[data-theme=dark]{--page:#070c16;--paper:#0f1727;--wash:#16213a;--ink:#e7edf8;--muted:#9aa7bd;--blue:#4c94f5;--line:#243250;--sel:#e7edf8;--selink:#0b1220;--cv1:#0d1526;--cv2:#0a1120;--shadow:0 1px 2px rgba(0,0,0,.4);color-scheme:dark}
+*{box-sizing:border-box}
+html{background:var(--page)}
+body{margin:0;background:var(--page);color:var(--ink);font-family:var(--font);line-height:1.5;transition:background .3s,color .3s}
+.wrap{max-width:1080px;margin:0 auto;padding:22px 16px 60px}
+@media(max-width:640px){.wrap{padding-left:38px}}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 16px}
+.eyebrow{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);font-weight:700}
+h1{font-size:clamp(34px,6vw,64px);line-height:1.04;margin:8px 0 10px;letter-spacing:-.03em}
+h2{margin:0 0 4px;font-size:24px;letter-spacing:-.01em}
+.sub{color:var(--muted);margin:0 0 14px;font-size:15px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:3px;background:var(--paper)}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 13px var(--font);padding:6px 14px;border-radius:999px;cursor:pointer;transition:.2s}
+.seg button[aria-pressed=true]{background:var(--sel);color:var(--selink)}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow);transition:background .3s,border-color .3s}
+.panel{display:none}.panel.on{display:block;animation:rise .45s ease both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes slide{to{opacity:1;transform:none}}
+.bk{border:0;background:var(--wash);color:var(--ink);font:700 13.5px var(--font);padding:8px 14px;border-radius:999px;cursor:pointer;margin:0 0 12px;transition:.2s}
+.bk:hover{background:var(--blue);color:#fff}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.chip{border:1px solid var(--line);background:var(--wash);padding:8px 14px;border-radius:999px;font:500 14px var(--font);cursor:pointer;color:var(--ink);transition:.18s}
+.chip:hover{border-color:var(--blue)}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+canvas{display:block;width:100%;border-radius:18px;background:linear-gradient(180deg,var(--cv1),var(--cv2))}
+.note{font-size:12.5px;color:var(--muted);margin:10px 0 0}
+.btn{border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:11px 22px;border-radius:999px;font:700 15px var(--font);cursor:pointer;transition:.18s}
+.btn:hover{border-color:var(--blue);transform:translateY(-1px)}
+.btn.pri{background:var(--blue);color:#fff;border-color:var(--blue)}
+.big{font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.03em;color:var(--blue);font-variant-numeric:tabular-nums;line-height:1.1}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:14px}
+@media(max-width:860px){.grid3{grid-template-columns:1fr}}
+.mini{background:var(--wash);border-radius:18px;padding:14px 16px;transition:background .3s}
+.mini h3{margin:0 0 10px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.two{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;align-items:start}
+@media(max-width:860px){.two{grid-template-columns:1fr}}
+/* drawer */
+.dhot{position:fixed;left:0;top:0;bottom:0;width:14px;z-index:40}
+.dhandle{position:fixed;left:0;top:50%;transform:translateY(-50%);z-index:41;border:1px solid var(--line);border-left:0;background:var(--paper);color:var(--ink);padding:18px 8px 18px 6px;border-radius:0 16px 16px 0;cursor:pointer;writing-mode:vertical-rl;font:700 11.5px var(--font);letter-spacing:.16em;text-transform:uppercase;box-shadow:4px 0 18px rgba(8,16,32,.12);transition:.25s}
+.dhandle:hover,.dhandle:focus-visible{padding-left:12px;background:var(--blue);color:#fff;outline:none}
+.drawer{position:fixed;left:0;top:0;bottom:0;width:310px;max-width:86vw;z-index:50;background:var(--paper);border-right:1px solid var(--line);box-shadow:10px 0 44px rgba(8,16,32,.22);padding:18px 14px;overflow:auto;transform:translateX(-102%);visibility:hidden;transition:transform .35s cubic-bezier(.2,.8,.2,1),visibility 0s .35s}
+.drawer.open{transform:none;visibility:visible;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.dhead{display:flex;justify-content:space-between;align-items:center;margin:0 4px 12px}
+.dhead b{font-size:15px}.dhead small{display:block;color:var(--muted);font-size:12px}
+.dx{border:0;background:var(--wash);color:var(--ink);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:16px}
+.dscrim{position:fixed;inset:0;background:rgba(5,10,20,.32);z-index:45;opacity:0;pointer-events:none;transition:opacity .3s}
+body.dopen .dscrim{opacity:1;pointer-events:auto}
+.tab{display:flex;align-items:center;gap:10px;width:100%;text-align:left;border:1px solid transparent;background:transparent;color:var(--ink);padding:11px 14px;border-radius:14px;font:600 14.5px var(--font);cursor:pointer;margin:0 0 4px;transition:.18s}
+.tab i{width:9px;height:9px;border-radius:50%;flex:none}
+.tab:hover{background:var(--wash)}
+.tab[aria-selected=true]{background:var(--sel);color:var(--selink)}
+/* home */
+.hero{padding:34px 28px 26px}
+.hero p{margin:0;color:var(--muted);font-size:clamp(16px,2vw,20px);max-width:640px}
+.tiles{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:22px}
+@media(max-width:980px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){.tiles{grid-template-columns:1fr}}
+.tile{position:relative;text-align:left;border:1px solid var(--line);background:var(--wash);color:var(--ink);border-radius:20px;padding:16px 16px 14px;cursor:pointer;font:inherit;transition:.22s}
+.tile:hover{transform:translateY(-3px);border-color:var(--blue);box-shadow:0 10px 26px rgba(8,16,32,.12)}
+.tile b{display:block;font-size:16px;margin:8px 0 2px}.tile span{font-size:13.5px;color:var(--muted);display:block}
+.tile i{display:block;width:26px;height:6px;border-radius:6px}
+.tag{position:absolute;top:12px;right:12px;font-size:10px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;background:var(--paper);color:var(--muted);border:1px solid var(--line)}
+.hint,.hero p.hint{margin:18px 0 0;font-size:13px;color:var(--muted)}
+/* pipeline */
+.stage{margin-top:12px;padding:12px 16px;border-radius:16px;background:var(--wash);min-height:62px}
+.stage b{display:block;font-size:15px}.stage span{color:var(--muted);font-size:14px}
+.fopt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;border-radius:14px;font:600 14px var(--font);cursor:pointer;margin:0 0 8px;transition:.18s}
+.fopt:hover{border-color:var(--blue)}
+.fopt.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.dec{font-size:15px;margin:0}
+.flash{animation:fl .8s ease}
+@keyframes fl{0%{box-shadow:0 0 0 0 rgba(8,102,220,.5)}100%{box-shadow:0 0 0 14px rgba(8,102,220,0)}}
+.next{margin-top:12px;padding:12px 16px;border-radius:16px;border:1px dashed var(--line);font-size:14px}
+.next b{color:var(--blue)}
+/* check */
+.qbox{min-height:132px}
+.qn{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;font-weight:700}
+.q{font-size:clamp(19px,2.6vw,25px);font-weight:700;letter-spacing:-.01em;margin:6px 0 14px;animation:rise .35s ease both}
+.yn{display:flex;gap:10px;flex-wrap:wrap}
+.bar{height:6px;background:var(--line);border-radius:6px;overflow:hidden;margin:0 0 14px}
+.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#78befa,#b09cf0,#f596be,#ffc478,#78dcaf);transition:width .5s ease}
+.res{display:grid;grid-template-columns:minmax(220px,300px) 1fr;gap:20px;align-items:center}
+@media(max-width:700px){.res{grid-template-columns:1fr}}
+.tier{font-size:24px;font-weight:800;letter-spacing:-.02em}
+.steps{margin:8px 0 0;padding:0;list-style:none}
+.steps li{padding:9px 12px;border-radius:14px;background:var(--wash);margin:0 0 8px;font-size:14.5px;opacity:0;transform:translateX(-8px);animation:slide .45s ease forwards}
+/* ask */
+.ask{display:flex;gap:8px;margin:0 0 12px}
+.ask input{flex:1;min-width:0;border:1px solid var(--line);border-radius:999px;padding:13px 18px;font:500 16px var(--font);outline:none;background:var(--paper);color:var(--ink)}
+.ask input:focus{border-color:var(--blue);box-shadow:0 0 0 4px rgba(76,148,245,.18)}
+.ans{min-height:150px;padding:16px 18px;border-radius:18px;background:var(--wash)}
+.ans p{margin:0 0 10px;font-size:16px}
+.src{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.src button{font:600 13px var(--font);cursor:pointer;color:var(--blue);border:1px solid var(--blue);background:var(--paper);padding:5px 12px;border-radius:999px;opacity:0;animation:slide .4s ease forwards}
+.src a{font-size:13px;font-weight:600;text-decoration:none;color:var(--blue);border:1px solid var(--line);background:var(--paper);padding:5px 12px;border-radius:999px;opacity:0;animation:slide .4s ease forwards}
+.cur{display:inline-block;width:2px;height:1em;background:var(--blue);vertical-align:-2px;margin-left:1px;animation:bl 1s steps(1) infinite}
+@keyframes bl{50%{opacity:0}}
+/* value chain */
+.vc{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:22px;margin-top:6px}
+@media(max-width:900px){.vc{grid-template-columns:1fr;gap:20px}}
+.vcc{position:relative;background:var(--wash);border-radius:18px;padding:14px 14px 16px;opacity:0;transform:translateY(8px);animation:slide .5s ease forwards}
+.vcc small{display:block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.vcc p{margin:0;font-size:14px}
+.vcc:not(:last-child)::after{content:"";position:absolute;right:-17px;top:50%;width:12px;height:12px;border-top:3px solid var(--blue);border-right:3px solid var(--blue);transform:translateY(-50%) rotate(45deg);opacity:.8}
+@media(max-width:900px){.vcc:not(:last-child)::after{right:50%;top:auto;bottom:-17px;transform:translateX(50%) rotate(135deg)}}
+.vcline{height:4px;border-radius:4px;margin:16px 0 4px;background:linear-gradient(90deg,transparent,var(--blue),transparent) 0 0/40% 100% no-repeat,var(--line);animation:run 2.6s linear infinite}
+@keyframes run{from{background-position:-40% 0,0 0}to{background-position:140% 0,0 0}}
+.vcv{margin-top:12px;padding:14px 16px;border-radius:16px;background:var(--sel);color:var(--selink);font-size:15px}
+.vcx{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:12px;font-size:13.5px;color:var(--muted)}
+/* trust */
+.ck{display:flex;gap:9px;align-items:flex-start;font-size:14px;margin:0 0 9px;cursor:pointer}
+.ck input{margin-top:3px;accent-color:var(--blue);width:16px;height:16px}
+.meter{height:8px;border-radius:8px;background:var(--line);overflow:hidden;margin:0 0 12px}
+.meter i{display:block;height:100%;border-radius:8px;transition:width .4s,background .4s}
+.verdict{margin-top:14px;padding:14px 16px;border-radius:18px;background:var(--wash);display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center}
+@media(max-width:700px){.verdict{grid-template-columns:1fr}}
+.vbadge{font-size:15px;font-weight:800;padding:8px 16px;border-radius:999px;color:#fff;text-align:center}
+.verdict p{margin:0;font-size:14.5px}
+/* escalations */
+.dots{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin:8px 0}
+.dots i{display:block;aspect-ratio:1;border-radius:50%;background:#6fc9a4;transition:background .6s,transform .6s}
+.dots.jan i{background:#f2a37b;animation:ping 1.6s ease-in-out infinite}
+.dots.jan i:nth-child(3n){animation-delay:.3s}.dots.jan i:nth-child(3n+1){animation-delay:.7s}.dots.jan i:nth-child(5n){animation-delay:1.1s}
+@keyframes ping{0%,100%{transform:scale(.7);opacity:.6}50%{transform:scale(1.1);opacity:1}}
+.dots.mar i{transform:scale(.45);opacity:.7}
+/* evidence */
+.legendrow{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+.pwrap{position:relative;display:grid;grid-template-columns:240px 1fr;gap:70px;align-items:start}
+@media(max-width:760px){.pwrap{grid-template-columns:1fr;gap:14px}.pwrap svg{display:none}}
+.pwrap svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.pl{display:flex;flex-direction:column;gap:8px}
+.pbtn{border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:16px;padding:10px 14px;text-align:left;cursor:pointer;font:600 14.5px var(--font);transition:.2s;position:relative}
+.pbtn small{display:block;font-weight:500;color:var(--muted);font-size:12px;margin-top:2px}
+.pbtn.on{background:var(--sel);color:var(--selink);border-color:var(--sel)}.pbtn.on small{color:inherit;opacity:.75}
+.evs{display:grid;grid-template-columns:1fr;gap:9px;align-content:start}
+.ev{border:1px solid var(--line);border-radius:16px;padding:11px 13px;background:var(--paper);font-size:13.5px;animation:rise .4s ease both}
+.ev b{display:block;font-size:14px;margin-bottom:2px}
+.ev{border-color:var(--c,#0866dc)}
+.lv{display:inline-block;font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:999px;margin-bottom:5px}
+/* career */
+.era{margin-top:12px;padding:13px 16px;border-radius:16px;background:var(--wash);min-height:74px}
+.era b{display:block;font-size:15px}.era span{color:var(--muted);font-size:13.5px}
+/* drawer groups */
+.dgrp{margin:6px 0 2px}
+.dgh{display:flex;justify-content:space-between;align-items:center;width:100%;border:0;background:transparent;color:var(--muted);font:800 11.5px var(--font);letter-spacing:.12em;text-transform:uppercase;padding:10px 14px 6px;cursor:pointer}
+.dgh span{font-size:10.5px;background:var(--wash);border-radius:999px;padding:1px 8px;letter-spacing:0}
+.dgh::after{content:"";width:7px;height:7px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:.25s;margin-left:auto;margin-right:2px}
+.dgh span{margin-left:8px}
+.dgrp.open .dgh{color:var(--blue)}.dgrp.open .dgh::after{transform:rotate(45deg)}
+.dgl{max-height:0;overflow:hidden;transition:max-height .35s ease}
+.dgrp.open .dgl{max-height:420px}
+/* home */
+.kpis{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:22px 0 4px}
+@media(max-width:980px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:520px){.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kpi{background:var(--wash);border-radius:18px;padding:12px 14px}
+.kpi b{display:block;white-space:nowrap;font-size:clamp(19px,2.3vw,26px);font-weight:800;letter-spacing:-.02em;color:var(--blue);font-variant-numeric:tabular-nums;line-height:1.15}
+.kpi span{font-size:12.5px;color:var(--muted);display:block;margin-top:2px;line-height:1.35}
+.hire{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0}
+.hire>span{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.hq{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:24px 0 10px}
+.qs{display:grid;gap:10px}
+.qrow{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:12px;align-items:center;background:var(--wash);border:1px solid transparent;border-radius:18px;padding:12px 14px;transition:.2s;opacity:0;transform:translateY(8px);animation:slide .5s ease forwards}
+.qrow:hover{border-color:var(--blue)}
+.qrow .qnum{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:800;color:#fff;font-size:14px}
+.qrow b{font-size:16px}
+.qrow .chips{margin:0;justify-content:flex-end}
+.qrow .chip{background:var(--paper);font-size:13px;padding:6px 12px}
+@media(max-width:760px){.qrow{grid-template-columns:36px minmax(0,1fr)}.qrow .chips{grid-column:1/-1;justify-content:flex-start}}
+.ctl{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin:0 0 12px}
+.lbl{font-size:13px;color:var(--muted);font-weight:600}
+/* strategy to value */
+.svw{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:64px;margin:6px 0 4px}
+.svw svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+.svc h3{margin:0 0 10px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--muted)}
+.svn{position:relative;z-index:1;display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--paper);color:var(--ink);border-radius:16px;padding:10px 13px;margin:0 0 10px;font:inherit;cursor:pointer;transition:opacity .3s,border-color .3s,transform .3s,box-shadow .3s}
+.svn b{display:block;font-size:14.5px;line-height:1.3}.svn small{display:block;color:var(--muted);font-size:12.5px;margin-top:3px;line-height:1.35}
+.svn.hot{border-color:var(--c);box-shadow:0 0 0 3px color-mix(in srgb,var(--c) 22%,transparent);transform:translateX(2px)}
+.svn.dim{opacity:.32}
+.svn .svk{display:none}
+.svl{fill:none;stroke:var(--line);stroke-width:2;transition:stroke .3s,opacity .3s}
+.svl.on{stroke:var(--c);stroke-width:2.6;stroke-dasharray:7 7;animation:dash 1.1s linear infinite}
+.svl.off{opacity:.25}
+@keyframes dash{to{stroke-dashoffset:-28}}
+@media(max-width:760px){.svw{grid-template-columns:1fr;gap:6px}.svw svg{display:none}.svn .svk{display:block;font-size:11.5px;color:var(--blue);margin-top:4px;font-weight:600}}
+/* portfolio */
+.rank{margin:0;padding:0;list-style:none;counter-reset:r}
+.rank li{display:grid;grid-template-columns:24px minmax(0,1fr);gap:8px;align-items:start;padding:8px 0;border-bottom:1px solid var(--line);font-size:13.5px;transition:background .3s}
+.rank li:last-child{border-bottom:0}
+.rank li .n{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:11.5px;font-weight:800;color:#fff}
+.rank li em{display:inline-block;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;padding:1px 7px;border-radius:999px;margin-top:3px}
+.rank li.mv{animation:fl .9s ease}
+/* role lens */
+.dayb{position:relative;height:28px;border-radius:999px;background:var(--wash);overflow:hidden;margin:0 0 4px}
+.dayb i{position:absolute;left:0;top:0;bottom:0;width:0;background:linear-gradient(90deg,#78befa,#b09cf0,#f596be);border-radius:999px}
+.dayb span{position:absolute;right:12px;top:4px;font-size:13px;font-weight:800;font-variant-numeric:tabular-nums}
+.ph{background:var(--wash);border-radius:18px;padding:14px 16px;opacity:.35;transition:opacity .5s,transform .5s;transform:translateY(6px)}
+.ph.on{opacity:1;transform:none}
+.ph h4{margin:0 0 8px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--blue)}
+.ph ul{margin:0 0 10px;padding-left:18px;font-size:14px}.ph li{margin:0 0 5px}
+.pre{font-size:12.5px;border-top:1px dashed var(--line);padding-top:8px;color:var(--muted)}.pre b{color:var(--ink)}
+.evl{margin:6px 0 0;padding-left:18px;font-size:13.5px}.evl li{margin:0 0 6px}
+.gap{margin-top:10px;padding:10px 12px;border-radius:14px;background:var(--paper);border:1px dashed var(--line);font-size:13px}
+.lnk{border:0;background:none;color:var(--blue);font:700 13px var(--font);cursor:pointer;padding:0}
+/* maturity */
+.dim2{display:grid;grid-template-columns:96px minmax(0,1fr) 26px;gap:8px;align-items:center;font-size:13px;margin:0 0 8px}
+.dim2 .tr{height:8px;border-radius:8px;background:var(--line);overflow:hidden}
+.dim2 .tr i{display:block;height:100%;border-radius:8px;transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.dim2 b{font-variant-numeric:tabular-nums;text-align:right}
+/* rhythm card */
+.orc h4{margin:0 0 2px;font-size:17px}.orc .cad{font-size:11.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.orc dl{margin:10px 0 0;font-size:13.5px}.orc dt{font-weight:800;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:8px}.orc dd{margin:2px 0 0}
+@media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
+</head>
+<body>
+<div class="dhot" id="dHot"></div>
+<button class="dhandle" id="dHandle" aria-controls="drawer" aria-expanded="false">Explore</button>
+<div class="dscrim" id="dScrim"></div>
+<aside class="drawer" id="drawer" aria-label="Sections">
+  <div class="dhead"><div><b>Pankaj Sabhlock</b><small>Head of Data Products</small></div><button class="dx" id="dClose" aria-label="Close menu">&times;</button></div>
+  <button class="tab" data-p="home" aria-selected="true"><i style="background:#0866dc"></i>Pankaj (home)</button>
+  <div class="dgrp" data-g="0"><button class="dgh" aria-expanded="false">Strategy and growth<span>4</span></button><div class="dgl">
+    <button class="tab" data-p="sv" aria-selected="false"><i style="background:#0866dc"></i>Strategy to Value</button>
+    <button class="tab" data-p="pf" aria-selected="false"><i style="background:#876ee1"></i>Portfolio Lens</button>
+    <button class="tab" data-p="cv" aria-selected="false"><i style="background:#32af7d"></i>Compounding Value</button>
+    <button class="tab" data-p="mh" aria-selected="false"><i style="background:#ebA032"></i>Maturity Horizons</button>
+  </div></div>
+  <div class="dgrp" data-g="1"><button class="dgh" aria-expanded="false">Leadership<span>4</span></button><div class="dgl">
+    <button class="tab" data-p="rl" aria-selected="false"><i style="background:#e65f96"></i>Role Lens</button>
+    <button class="tab" data-p="or" aria-selected="false"><i style="background:#f07855"></i>Operating Rhythm</button>
+    <button class="tab" data-p="prin" aria-selected="false"><i style="background:#4696eb"></i>Impact and Evidence</button>
+    <button class="tab" data-p="ask" aria-selected="false"><i style="background:#876ee1"></i>Ask the work</button>
+  </div></div>
+  <div class="dgrp" data-g="2"><button class="dgh" aria-expanded="false">Proof of work<span>6</span></button><div class="dgl">
+    <button class="tab" data-p="lab" aria-selected="false"><i style="background:#4696eb"></i>Data to Decision</button>
+    <button class="tab" data-p="map" aria-selected="false"><i style="background:#e65f96"></i>Value Chain</button>
+    <button class="tab" data-p="est" aria-selected="false"><i style="background:#32af7d"></i>Estate</button>
+    <button class="tab" data-p="trust" aria-selected="false"><i style="background:#ebA032"></i>Trust Chain</button>
+    <button class="tab" data-p="car" aria-selected="false"><i style="background:#876ee1"></i>Career Signal</button>
+    <button class="tab" data-p="chk" aria-selected="false"><i style="background:#876ee1"></i>Responsible AI Check</button>
+  </div></div>
+</aside>
+
+<div class="wrap">
+  <div class="top">
+    <div class="eyebrow">Portfolio Lab · local preview · nothing is published</div>
+    <div class="seg" id="themeSeg" role="group" aria-label="Colour mode">
+      <button data-m="light" aria-pressed="false">Light</button><button data-m="dark" aria-pressed="false">Dark</button><button data-m="system" aria-pressed="true">System</button>
+    </div>
+  </div>
+
+  <section class="card panel on hero" id="p-home">
+    <div class="eyebrow">Head of Data Products · University of East London</div>
+    <h1>Pankaj Sabhlock</h1>
+    <p>Trusted data, explainable insight, human action. Seventeen years turning data into decisions, across telecom and higher education.</p>
+    <div class="kpis" id="kpis"></div>
+    <div class="hire"><span>Hiring for</span><div class="chips" id="hireChips" style="margin:0"></div></div>
+    <h3 class="hq">What a board asks</h3>
+    <div class="qs" id="boardQs"></div>
+    <p class="hint">Hover the Explore edge on the left to see every section. Each one has a back button to return here.</p>
+  </section>
+
+
+  <section class="card panel" id="p-sv">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Strategy to Value</h2>
+    <p class="sub">Line of sight from what the organisation wants, to the data and AI work, to what changed. Hover or tap any card to follow its thread.</p>
+    <div class="chips" id="svCtx"></div>
+    <div class="svw" id="svW"><svg id="svSvg" aria-hidden="true"></svg>
+      <div class="svc"><h3>Organisational goals</h3><div id="svG"></div></div>
+      <div class="svc"><h3>Data and AI bets</h3><div id="svB"></div></div>
+      <div class="svc"><h3>Measured outcomes</h3><div id="svO"></div></div>
+    </div>
+    <div class="vcv" id="svLine"></div>
+    <p class="note" id="svNote"></p>
+  </section>
+
+  <section class="card panel" id="p-pf">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Portfolio Lens</h2>
+    <p class="sub">One portfolio, different strategies. Pick what the organisation puts first and watch the order change. Then set how much can be funded this quarter.</p>
+    <div class="chips" id="pfPri"></div>
+    <div class="ctl"><span class="lbl">Capacity this quarter</span><div class="seg" id="pfCap"><button data-n="3" aria-pressed="false">3</button><button data-n="4" aria-pressed="true">4</button><button data-n="5" aria-pressed="false">5</button></div>
+      <label class="ck" style="margin:0"><input type="checkbox" id="pfGate" checked> Governance gate for AI work</label></div>
+    <div class="two"><div><canvas id="pfCv" height="420"></canvas></div>
+      <div class="mini"><h3>Ranked for this strategy</h3><ol class="rank" id="pfRank"></ol></div></div>
+    <div class="vcv" id="pfMsg"></div>
+    <p class="note">Scores are illustrative, to show the method. They are not UEL's own assessment. The initiatives are types of work described on the site.</p>
+  </section>
+
+  <section class="card panel" id="p-cv">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Compounding Value</h2>
+    <p class="sub">Two ways to spend the same team over three years. Report by report feels faster at first. Foundation first is slower to start, then each new product costs less to run and serves more decisions.</p>
+    <div class="ctl"><div class="seg" id="cvShow"><button data-s="v" aria-pressed="true">Decision value</button><button data-s="u" aria-pressed="false">Team time on upkeep</button></div><button class="btn" id="cvPlay">Replay</button></div>
+    <canvas id="cvCv" height="360"></canvas>
+    <div class="grid3">
+      <div class="mini"><h3>Month</h3><div class="big" id="cvM">0</div></div>
+      <div class="mini"><h3>Report by report</h3><p class="dec" id="cvA"></p></div>
+      <div class="mini"><h3>Foundation first</h3><p class="dec" id="cvB"></p></div>
+    </div>
+    <div class="vcv" id="cvMsg"></div>
+    <p class="note">An illustrative model of the argument, not UEL data. The real anchors are on the site: about 950 reports brought down to about 200 on one governed model, and reporting escalations from daily in January to none from March 2026.</p>
+  </section>
+
+  <section class="card panel" id="p-mh">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Maturity Horizons</h2>
+    <p class="sub">Where the organisation was, where it is, and where it is heading, on five steps from fragmented data to AI-augmented decisions.</p>
+    <div class="chips" id="mhSt"></div>
+    <div class="ctl"><label class="ck" style="margin:0"><input type="checkbox" id="mhTel"> Show where the telecom work reached</label></div>
+    <canvas id="mhCv" height="330"></canvas>
+    <div class="two" style="margin-top:14px"><div class="mini"><h3 id="mhH">State</h3><p class="dec" id="mhTxt"></p><p class="dec" id="mhLev" style="margin-top:8px;color:var(--muted)"></p></div>
+      <div class="mini"><h3>Five dimensions</h3><div id="mhDims"></div></div></div>
+    <p class="note">The step placement is my own reading of the site's records. The next 18 months is an illustrative target, not a claim.</p>
+  </section>
+
+  <section class="card panel" id="p-or">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Operating Rhythm</h2>
+    <p class="sub">How decisions get made week to week, not just once. Issues rise outward to the forum that can settle them, and decisions come back in as owned actions. Tap a forum.</p>
+    <div class="two"><div><canvas id="orCv" height="440"></canvas></div>
+      <div class="mini" id="orCard"></div></div>
+    <p class="note">The forums are a model of how I would set up the rhythm. The precedents come from the site.</p>
+  </section>
+
+  <section class="card panel" id="p-rl">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Role Lens</h2>
+    <p class="sub">Pick the role you are hiring for. The outline shows what the role leans on most. The fill shows how much evidence this site holds for each. Tap a label to see the evidence.</p>
+    <div class="chips" id="rlRole"></div>
+    <div class="two"><div><canvas id="rlCv" height="400"></canvas></div>
+      <div class="mini" id="rlEv"></div></div>
+    <h3 class="hq" style="margin-top:20px" id="rlPlanH">First 100 days</h3>
+    <div class="dayb"><i id="rlBar"></i><span id="rlDay">Day 0</span></div>
+    <div class="grid3" id="rlPlan"></div>
+    <p class="note">Role emphasis is my own reading of what these roles usually need. Evidence depth counts items on the site. The plan is a proposal, with precedents taken from the site.</p>
+  </section>
+
+  <section class="card panel" id="p-lab">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Data to Decision</h2>
+    <p class="sub">Fragmented data is transformed, modelled and checked for governance, then a person decides. Move the filter and watch the decision, its impact and the next value change. Click a stage to pause on it.</p>
+    <div class="chips" id="labChips"></div>
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px"><span style="font-size:13px;color:var(--muted);font-weight:600">Transform style</span>
+      <div class="seg" id="labTf"><button data-t="ETL" aria-pressed="true">ETL</button><button data-t="ELT" aria-pressed="false">ELT</button></div></div>
+    <canvas id="labCv" height="270"></canvas>
+    <div class="stage" id="labStage"></div>
+    <div class="grid3">
+      <div class="mini"><h3>Move the filter</h3><div id="labF"></div></div>
+      <div class="mini" id="labDecBox"><h3>Decision</h3><p class="dec" id="labDec"></p></div>
+      <div class="mini" id="labImpBox"><h3>Impact</h3><div class="big" id="labBig"></div><p class="dec" id="labImp" style="margin-top:6px"></p></div>
+    </div>
+    <div class="next" id="labNext"></div>
+    <p class="note" id="labSrc"></p>
+  </section>
+
+  <section class="card panel" id="p-chk">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Responsible AI Check</h2>
+    <p class="sub">Six questions about an AI use case. You get a plain-language read and next steps. Nothing is stored.</p>
+    <div id="chkBody"></div>
+    <p class="note">A thinking aid based on common responsible AI and EU AI Act ideas. It is not legal advice and not a formal risk classification.</p>
+  </section>
+
+  <section class="card panel" id="p-map">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Value Chain</h2>
+    <p class="sub">How a result was made and who it helps. Read left to right: the need, what was done, what came out, what changed, and who benefits. Pick a result.</p>
+    <div class="chips" id="vcChips"></div>
+    <div class="vc" id="vcRow"></div>
+    <div class="vcline"></div>
+    <div class="vcv" id="vcVal"></div>
+    <div class="vcx" id="vcTags"></div>
+    <p class="note" id="vcBasis"></p>
+  </section>
+
+  <section class="card panel" id="p-ask">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Ask the work</h2>
+    <p class="sub">Leadership questions, answered only from this site's own content, with a link to the section behind each answer.</p>
+    <form class="ask" id="askForm"><input id="askIn" placeholder="For example: What value has he delivered as Head of Data Products?" autocomplete="off"><button class="btn pri" type="submit">Ask</button></form>
+    <div class="chips" id="askChips"></div>
+    <div class="ans" id="askAns"><p style="color:var(--muted)">Answers appear here.</p></div>
+  </section>
+
+  <section class="card panel" id="p-trust">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Trust Chain</h2>
+    <p class="sub">A decision is only as strong as its weakest link. Pick a decision, then switch checks on and off to see where the chain holds and where it breaks.</p>
+    <div class="chips" id="tcPre"></div>
+    <canvas id="tcCv" height="150"></canvas>
+    <div class="grid3" id="tcCols"></div>
+    <div class="verdict" id="tcVerdict"></div>
+    <p class="note">Illustrative starting points to show the idea. The three links are the ones the site describes: trusted data, explainable insight, human action.</p>
+  </section>
+
+  <section class="card panel" id="p-est">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Estate: fragmented reports to one model to about 200</h2>
+    <p class="sub">Around 950 fragmented reports are pulled into one governed model, which serves a focused core of about 200 reports.</p>
+    <div class="two">
+      <div><canvas id="estCv" height="380"></canvas></div>
+      <div>
+        <div class="mini"><h3>Now showing</h3><p id="estTxt" style="margin:0 0 10px;font-size:14.5px;min-height:66px"></p>
+          <button class="btn" id="estReplay">Replay</button></div>
+        <div class="mini" style="margin-top:12px"><h3>Reporting escalations</h3>
+          <div class="chips" style="margin:0 0 4px"><button class="chip on" id="escJan">January</button><button class="chip" id="escMar">From March 2026</button></div>
+          <div class="dots jan" id="escDots"></div><p id="escTxt" style="margin:0;font-size:13.5px">January: frequent daily escalations.</p></div>
+      </div>
+    </div>
+    <p class="note">Positions and colours are illustrative. The 950, about 200 and the January to March 2026 change come from the site (UEL role records, as reported by the employer).</p>
+  </section>
+
+  <section class="card panel" id="p-prin">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Impact and Evidence</h2>
+    <p class="sub">What a head of data or a chief data officer is expected to show, and the evidence behind each. Pick a leadership theme.</p>
+    <div class="legendrow" id="prinLegend"></div>
+    <div class="pwrap" id="prinWrap"><svg id="prinSvg"></svg><div class="pl" id="prinL"></div><div class="evs" id="prinR"></div></div>
+    <p class="note">Each label shows how solid the evidence is. Figures follow the basis notes on the site: approximate, as reported by the employer, not independently audited.</p>
+  </section>
+
+  <section class="card panel" id="p-car">
+    <button class="bk" data-back>&larr; Back to Pankaj</button>
+    <h2>Career Signal</h2>
+    <p class="sub">Seventeen years, six capabilities. Once a capability is built it stays: the light shade is what was attained, the dark shade is what is being worked on at that time. Hover or touch to read each period.</p>
+    <div class="chips" id="carView"></div>
+    <canvas id="carCv" height="470"></canvas>
+    <div class="era" id="carEra"></div>
+    <p class="note">Shading is a visual summary of the role descriptions on the site, not a measurement.</p>
+  </section>
+</div>
+
+<script>
+(function(){
+var PAS=['120,190,250','176,156,240','245,150,190','255,160,130','255,196,120','120,220,175'];
+var DEEP=['70,150,235','135,110,225','230,95,150','240,120,85','235,160,50','50,175,125'];
+var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+var SITE='https://pankajsabhlock.github.io/';
+var FONT='-apple-system,Segoe UI,Helvetica,Arial,sans-serif';
+function $(id){return document.getElementById(id)}
+function hash(x,y){var n=Math.sin(x*12.9898+y*78.233)*43758.5453;return n-Math.floor(n)}
+function ease(k){k=Math.max(0,Math.min(1,k));return k*k*(3-2*k)}
+function cl(v){return Math.max(0,Math.min(1,v))}
+function lerp(a,b,k){return a+(b-a)*k}
+function rr(c,X,y,w,h,r){c.beginPath();c.moveTo(X+r,y);c.arcTo(X+w,y,X+w,y+h,r);c.arcTo(X+w,y+h,X,y+h,r);c.arcTo(X,y+h,X,y,r);c.arcTo(X,y,X+w,y,r);c.closePath()}
+function fit(cv){var d=Math.min(window.devicePixelRatio||1,2),w=cv.clientWidth,h=+cv.getAttribute('height');cv.width=Math.round(w*d);cv.height=Math.round(h*d);var x=cv.getContext('2d');x.setTransform(d,0,0,d,0,0);return{x:x,w:w,h:h}}
+function mix3(a,b,k){return[Math.round(lerp(a[0],b[0],k)),Math.round(lerp(a[1],b[1],k)),Math.round(lerp(a[2],b[2],k))]}
+function rgb(a){return a[0]+','+a[1]+','+a[2]}
+
+/* ---------------- theme ---------------- */
+var CKL={ink:'#17202e',muted:'#5c6675',box:'#ffffff',boxLine:'#d5dde9',track:'rgba(120,140,170,.3)',tick:'#8a94a6',lane:'rgba(120,140,170,.2)',noise:[150,162,180]};
+var CKD={ink:'#e7edf8',muted:'#9aa7bd',box:'#16213a',boxLine:'#2d3d5e',track:'rgba(150,170,210,.32)',tick:'#7f8da6',lane:'rgba(150,170,210,.2)',noise:[112,126,152]};
+var CK=CKL,mode='system',mq=window.matchMedia('(prefers-color-scheme: dark)');
+function applyTheme(){
+  var dark=mode==='dark'||(mode==='system'&&mq.matches);
+  document.documentElement.setAttribute('data-theme',dark?'dark':'light');CK=dark?CKD:CKL;
+  document.querySelectorAll('#themeSeg button').forEach(function(b){b.setAttribute('aria-pressed',b.dataset.m===mode?'true':'false')});
+}
+document.querySelectorAll('#themeSeg button').forEach(function(b){b.onclick=function(){mode=b.dataset.m;applyTheme()}});
+if(mq.addEventListener)mq.addEventListener('change',function(){if(mode==='system')applyTheme()});
+
+/* ---------------- shell: drawer and navigation ---------------- */
+var cur='home',INIT={},FR={},RS=false;
+var dr=$('drawer'),dtimer=0;
+function openDrawer(){clearTimeout(dtimer);dr.classList.add('open');document.body.classList.add('dopen');$('dHandle').setAttribute('aria-expanded','true')}
+function closeDrawer(){clearTimeout(dtimer);dr.classList.remove('open');document.body.classList.remove('dopen');$('dHandle').setAttribute('aria-expanded','false')}
+$('dHot').addEventListener('mouseenter',openDrawer);
+$('dHandle').addEventListener('mouseenter',openDrawer);
+$('dHandle').addEventListener('focus',openDrawer);
+$('dHandle').addEventListener('click',openDrawer);
+dr.addEventListener('mouseenter',function(){clearTimeout(dtimer)});
+dr.addEventListener('mouseleave',function(){dtimer=setTimeout(closeDrawer,300)});
+$('dScrim').addEventListener('click',closeDrawer);
+$('dClose').addEventListener('click',closeDrawer);
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeDrawer()});
+function go(p){
+  cur=p;
+  document.querySelectorAll('.tab').forEach(function(t){t.setAttribute('aria-selected',t.dataset.p===p?'true':'false')});
+  document.querySelectorAll('.panel').forEach(function(x){x.classList.toggle('on',x.id==='p-'+p)});
+  closeDrawer();
+  if(INIT[p])INIT[p]();
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){go(b.dataset.p)})});
+document.querySelectorAll('[data-back]').forEach(function(b){b.addEventListener('click',function(){go('home')})});
+/* drawer groups: open on hover or click, and the group holding the current section opens with the drawer */
+var GRPS=document.querySelectorAll('.dgrp');
+function grpOpen(g,on){g.classList.toggle('open',on);g.querySelector('.dgh').setAttribute('aria-expanded',on?'true':'false')}
+GRPS.forEach(function(g){
+  var h=g.querySelector('.dgh');
+  h.addEventListener('click',function(){grpOpen(g,!g.classList.contains('open'))});
+  g.addEventListener('mouseenter',function(){if(window.matchMedia('(hover:hover)').matches)grpOpen(g,true)});
+});
+function grpSync(){GRPS.forEach(function(g){if(g.querySelector('.tab[data-p="'+cur+'"]'))grpOpen(g,true)});if(cur==='home')GRPS.forEach(function(g,i){if(i===0)grpOpen(g,true)})}
+$('dHandle').addEventListener('mouseenter',grpSync);$('dHandle').addEventListener('click',grpSync);$('dHot').addEventListener('mouseenter',grpSync);
+
+/* ---------------- home ---------------- */
+var KPI=[{a:950,b:200,pre:'950 → ',t:'reports, on one governed model'},{a:9,b:0,t:'reporting escalations from March 2026'},{a:0,b:34,suf:'%',t:'reported network KPI improvement'},{a:0,b:3600,t:'sites upgraded in eight months'},{a:0,b:17,suf:'+',t:'years, India, Myanmar and the UK'},{a:0,b:12,suf:'+',t:'engineers mentored'}];
+var BQ=[
+ ['Where will data create value for us?',[['sv','Strategy to Value'],['map','Value Chain']]],
+ ['Where should we invest first?',[['pf','Portfolio Lens'],['cv','Compounding Value']]],
+ ['Can we trust it, AI included?',[['trust','Trust Chain'],['lab','Data to Decision'],['chk','Responsible AI Check']]],
+ ['Who will lead it, and how?',[['rl','Role Lens'],['or','Operating Rhythm'],['prin','Impact and Evidence'],['ask','Ask the work']]],
+ ['Where are we heading?',[['mh','Maturity Horizons'],['est','Estate'],['car','Career Signal']]]
+];
+var ROLES=['Director of Data','Senior Director, Data and AI','Chief of Staff','Chief AI Officer'];
+var homeB=false,kpiT0=0;
+function fmt(n){return Math.round(n).toLocaleString('en-GB')}
+INIT.home=function(){
+  if(!homeB){homeB=true;
+    $('kpis').innerHTML=KPI.map(function(k,i){return '<div class="kpi"><b id="kv'+i+'">'+(k.pre||'')+fmt(k.b)+(k.suf||'')+'</b><span>'+k.t+'</span></div>'}).join('');
+    var hc=$('hireChips');ROLES.forEach(function(r,i){var b=document.createElement('button');b.className='chip';b.textContent=r;b.onclick=function(){go('rl');rlSel(i)};hc.appendChild(b)});
+    $('boardQs').innerHTML=BQ.map(function(q,i){return '<div class="qrow" style="animation-delay:'+(i*.08)+'s"><span class="qnum" style="background:rgb('+DEEP[i]+')">'+(i+1)+'</span><b>'+q[0]+'</b><div class="chips">'+q[1].map(function(v){return '<button class="chip" data-go="'+v[0]+'">'+v[1]+' →</button>'}).join('')+'</div></div>'}).join('');
+    document.querySelectorAll('#boardQs [data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go)}});
+  }
+  if(!RS)kpiT0=performance.now();
+};
+FR.home=function(){
+  if(!kpiT0)return;var k=ease((performance.now()-kpiT0)/1600);if(reduce)k=1;
+  KPI.forEach(function(o,i){var e=$('kv'+i);if(e)e.textContent=(o.pre||'')+fmt(lerp(o.a,o.b,k))+(o.suf||'')});
+  if(k>=1)kpiT0=0;
+};
+
+/* ---------------- 1 Data to Decision ---------------- */
+var SCN=[
+ {k:'Which reports actually matter?',keep:[.95,.6,.21],f:[
+  {n:'Keep every report',q:0,dec:'No decision yet. Every report stays, duplicates and all.',big:'950',imp:'reports to read, with no clear purpose or owner for each.'},
+  {n:'Remove obvious duplicates',q:.5,dec:'A first clean-up. Still more than the business needs.',big:'In between',imp:'Fewer reports, but still no clear purpose for each.'},
+  {n:'Keep what supports a decision',q:1,dec:'Retire duplicates and low-value reports. Keep a core, each with a purpose.',big:{from:950,to:200,pre:'About '},imp:'reports, down from around 950.'}],
+  next:'Time goes to new questions instead of reconciling reports. Escalations went from daily in January to none from March 2026.',src:'Basis: UEL role records, as reported by the employer. Approximate, not independently audited.'},
+ {k:'Where should the network upgrade first?',keep:[.7,.5,.35],f:[
+  {n:'Upgrade sites in turn',q:0,dec:'No priority. Sites are upgraded in the order they come up.',big:'Unranked',imp:'No view of where capacity is under most pressure.'},
+  {n:'Rank by capacity pressure',q:.55,dec:'Ranking models put the busiest parts of the network first.',big:'Ranked',imp:'A better order, but demand is not yet forecast.'},
+  {n:'Forecast demand, then rank',q:1,dec:'Capacity forecasts and ranking set the upgrade order.',big:{from:0,to:34,suf:'%'},imp:'reported network KPI improvement, ZTE and Ooredoo.'}],
+  next:'A 3,600-site upgrade, co-led on performance and capacity, delivered in eight months.',src:'Basis: role descriptions on the site, as reported. Not independently audited.'},
+ {k:'Which students should staff reach out to first?',keep:[.9,.55,.3],f:[
+  {n:'Treat every student the same',q:0,dec:'Support is not targeted. Staff have no signal to act on.',big:'No signal',imp:'Effort is spread thinly.'},
+  {n:'Risk flag with no reason',q:.45,dec:'Staff see a flag but not why. Hard to act on, hard to trust.',big:'Flag only',imp:'A signal, without reasons behind it.'},
+  {n:'Explainable risk, staff-led',q:1,dec:'Staff see the reasons and decide the support. A person owns the call.',big:'Explained',imp:'Accountable, staff-led support (STRAP).'}],
+  next:'Insights feed a working STRAP and HEPI practice document developed with UEL\'s Dean of Students.',src:'Basis: STRAP description on the site.'}
+];
+var STN=[['Sources','fragmented'],['Transform','ETL'],['Model','one model'],['Check','governed'],['Decision','owned'],['Impact','change'],['Next value','unlock']];
+var CHK4=['Owner','Quality','Explainable','Human'];
+var lab={i:0,fi:2,tf:'ETL',f:null,ps:[],acc:0,clock:0,hold:-1,pos:[],bw:0,bh:44,st:-1,bt:9,built:false,narrow:false};
+function labDesc(k){
+  var s=SCN[lab.i],f=s.f[lab.fi],etl=lab.tf==='ETL';
+  return[
+   ['Fragmented sources','Reports, systems and spreadsheets that each hold part of the picture, and rarely agree.'],
+   [etl?'Transform (ETL)':'Load, then transform (ELT)',etl?'Clean, match and standardise the data before it is loaded.':'Load the raw data first, then clean, match and standardise it inside the platform.'],
+   ['Model','One governed model, with one definition for each measure.'],
+   ['Governance check','Owner named, quality tested, explainable, a person in the loop. '+Math.round(f.q*4)+' of 4 pass with this filter.'],
+   ['Decision',f.dec],['Impact',(typeof f.big==='string'?f.big+'. ':'')+f.imp],['Next value',s.next]][k];
+}
+function labStageText(){var d=labDesc(lab.st<0?0:lab.st);$('labStage').innerHTML='<b>'+(lab.st+1)+' '+d[0]+'</b><span>'+d[1]+'</span>'}
+function labLayout(){
+  var w=lab.f.w,h=lab.f.h;lab.pos=[];lab.narrow=w<640;
+  for(var i=0;i<7;i++){
+    if(!lab.narrow)lab.pos.push([(i+.5)*w/7,h*.6]);
+    else lab.pos.push(i<4?[(i+.5)*w/4,h*.3]:[(i-4+.5)*w/4+w/8,h*.74]);
+  }
+  lab.bw=lab.narrow?Math.min(78,w/4-8):Math.min(122,w/7-10);lab.bh=lab.narrow?50:60;
+}
+function labSet(i,fi){
+  lab.i=i;lab.fi=fi;var s=SCN[i],f=s.f[fi];
+  document.querySelectorAll('#labChips .chip').forEach(function(c,j){c.classList.toggle('on',j===i)});
+  var F=$('labF');F.innerHTML='';
+  s.f.forEach(function(o,j){var b=document.createElement('button');b.className='fopt'+(j===fi?' on':'');b.textContent=o.n;b.onclick=function(){labSet(lab.i,j)};F.appendChild(b)});
+  $('labDec').textContent=f.dec;$('labImp').textContent=f.imp;$('labNext').innerHTML='<b>Next value.</b> '+s.next;$('labSrc').textContent=s.src;
+  lab.bt=0;lab.big=f.big;
+  if(typeof f.big==='string'||reduce){$('labBig').textContent=typeof f.big==='string'?f.big:(f.big.pre||'')+f.big.to+(f.big.suf||'');lab.bt=9}
+  ['labDecBox','labImpBox'].forEach(function(id){var e=$(id);e.classList.remove('flash');void e.offsetWidth;e.classList.add('flash')});
+  lab.st=-2;
+}
+INIT.lab=function(){
+  if(!lab.built){
+    lab.built=true;
+    var c=$('labChips');SCN.forEach(function(s,i){var b=document.createElement('button');b.className='chip';b.textContent=s.k;b.onclick=function(){labSet(i,2)};c.appendChild(b)});
+    document.querySelectorAll('#labTf button').forEach(function(b){b.onclick=function(){lab.tf=b.dataset.t;document.querySelectorAll('#labTf button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')});lab.st=-2}});
+    $('labCv').addEventListener('click',function(e){
+      var r=this.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;
+      for(var k=0;k<7;k++){var P=lab.pos[k];if(Math.abs(mx-P[0])<lab.bw/2+4&&Math.abs(my-P[1])<lab.bh/2+6){lab.hold=lab.hold===k?-1:k;lab.st=-2;return}}
+      lab.hold=-1;lab.st=-2;
+    });
+  }
+  var cv=$('labCv');cv.setAttribute('height',cv.clientWidth<640?380:330);
+  lab.f=fit(cv);labLayout();lab.ps=[];
+  if(!reduce){for(var z=0;z<320;z++){var uu=Math.random()*6.6,fa=Math.random();if(uu>=3&&fa>SCN[lab.i].keep[lab.fi])continue;lab.ps.push({u:uu,j:(Math.random()-.5)*2,ox:(Math.random()-.5)*2,c:Math.floor(Math.random()*6),fate:fa,sp:.62+Math.random()*.14,held:-1,ck:uu>=3?1:0})}}
+  labSet(lab.i,lab.fi);
+};
+function labPos(u){
+  var P=lab.pos;
+  if(u<=6){var k=Math.min(5,Math.floor(u)),f=u-k;return[lerp(P[k][0],P[k+1][0],f),lerp(P[k][1],P[k+1][1],f)]}
+  var t=u-6,a=P[6],b=P[0],lift=lab.narrow?0:105,u1=1-t;
+  var c1=lab.narrow?[a[0]-30,a[1]+62]:[a[0],a[1]-lift],c2=lab.narrow?[4,b[1]+50]:[b[0],b[1]-lift];
+  return[u1*u1*u1*a[0]+3*u1*u1*t*c1[0]+3*u1*t*t*c2[0]+t*t*t*b[0],u1*u1*u1*a[1]+3*u1*u1*t*c1[1]+3*u1*t*t*c2[1]+t*t*t*b[1]]
+}
+FR.lab=function(dt){
+  var f=lab.f;if(!f||!lab.pos.length)return;
+  var x=f.x,w=f.w,h=f.h,s=SCN[lab.i],fo=s.f[lab.fi],keep=s.keep[lab.fi],q=fo.q;
+  lab.clock+=dt;
+  var st=lab.hold>=0?lab.hold:Math.floor((lab.clock%10.5)/1.5);
+  if(reduce&&lab.hold<0)st=5;
+  if(st!==lab.st){lab.st=st;labStageText()}
+  // count up
+  if(lab.bt<9&&lab.big&&typeof lab.big==='object'){lab.bt+=dt;var k=ease(lab.bt/1.6),v=Math.round(lerp(lab.big.from,lab.big.to,k));$('labBig').textContent=(lab.big.pre||'')+v+(lab.big.suf||'');if(lab.bt>=1.6){lab.bt=9;$('labBig').textContent=(lab.big.pre||'')+lab.big.to+(lab.big.suf||'')}}
+  x.clearRect(0,0,w,h);
+  // tracks
+  x.strokeStyle=CK.track;x.lineWidth=2;x.beginPath();for(var i=0;i<7;i++){if(i===0)x.moveTo(lab.pos[i][0],lab.pos[i][1]);else x.lineTo(lab.pos[i][0],lab.pos[i][1])}x.stroke();
+  x.setLineDash([3,6]);x.beginPath();for(var u=6;u<=7.001;u+=.04){var p0=labPos(u);if(u===6)x.moveTo(p0[0],p0[1]);else x.lineTo(p0[0],p0[1])}x.stroke();x.setLineDash([]);
+  var pl=labPos(6.5);x.fillStyle=CK.muted;x.font='600 11px '+FONT;x.textAlign='center';x.fillText('the next question starts here',pl[0],pl[1]-(lab.narrow?-4:8));
+  // particles
+  var rate=reduce?0:34;lab.acc+=dt*rate;
+  while(lab.acc>=1){lab.acc--;lab.ps.push({u:0,j:(Math.random()-.5)*2,ox:(Math.random()-.5)*2,c:Math.floor(Math.random()*6),fate:Math.random(),sp:.62+Math.random()*.14,held:-1,ck:0})}
+  var out=mix3(CK.noise,[50,175,125],q),blue=[70,150,235];
+  for(var n=lab.ps.length-1;n>=0;n--){
+    var p=lab.ps[n];
+    if(p.held<0){p.u+=p.sp*dt;if(!p.ck&&p.u>=3){p.ck=1;if(p.fate>keep)p.held=0}}else{p.held+=dt;if(p.held>1){lab.ps.splice(n,1);continue}}
+    if(p.u>=7){lab.ps.splice(n,1);continue}
+    var pos=labPos(Math.min(p.u,7)),sp=(p.u<1?(1-p.u)*(lab.narrow?44:70):p.u<2.2?Math.max(0,(2-p.u))*8+2:4),px=pos[0],py=pos[1];
+    if(p.u<1)px+=p.ox*(1-p.u)*(lab.narrow?20:44);
+    py+=p.j*sp;
+    var col,al=1;
+    if(p.u<1)col=PAS[p.c];
+    else if(p.u<2)col=rgb(mix3(PAS[p.c].split(',').map(Number),blue,p.u-1));
+    else if(p.u<3)col=rgb(blue);
+    else col=rgb(mix3(blue,out,cl((p.u-3)/.5)));
+    if(p.held>=0){py+=p.held*26;al=1-p.held;col='214,69,107'}
+    if(p.u>6.7)al*=(7-p.u)/.3;
+    x.fillStyle='rgba('+col+','+(.95*al)+')';x.fillRect(Math.round(px-2.5),Math.round(py-2.5),5,5);
+  }
+  // nodes
+  var etl=lab.tf==='ETL';
+  for(var k2=0;k2<7;k2++){
+    var P=lab.pos[k2],bw=lab.bw,bh=lab.bh,on=k2===st;
+    x.fillStyle=CK.box;x.strokeStyle=on?'rgb(70,150,235)':CK.boxLine;x.lineWidth=on?2.5:1.5;
+    if(on){x.shadowColor='rgba(70,150,235,.45)';x.shadowBlur=14}
+    rr(x,P[0]-bw/2,P[1]-bh/2,bw,bh,14);x.fill();x.stroke();x.shadowBlur=0;
+    x.textAlign='center';x.fillStyle=CK.ink;x.font='700 '+(lab.narrow?11:15)+'px '+FONT;x.fillText(STN[k2][0],P[0],P[1]-3);
+    x.fillStyle=CK.muted;x.font='500 '+(lab.narrow?9.5:11.5)+'px '+FONT;x.fillText(k2===1?(etl?'ETL':'ELT'):STN[k2][1],P[0],P[1]+14);
+    if(k2===3){for(var d=0;d<4;d++){var lit=d<Math.round(q*4);x.fillStyle=lit?'rgb(50,175,125)':'rgba('+rgb(CK.noise)+',.45)';x.beginPath();x.arc(P[0]-18+d*12,P[1]+bh/2+11,3.6,0,6.283);x.fill()}
+      x.fillStyle=CK.muted;x.font='500 10px '+FONT;x.fillText(Math.round(q*4)+' of 4 pass',P[0],P[1]+bh/2+27)}
+  }
+  x.textAlign='left';
+};
+
+/* ---------------- 2 Responsible AI Check ---------------- */
+var QS=[
+ {q:'Does it influence decisions about people, such as admissions, grades, support or hiring?',w:2,yes:1,tip:'Name the people affected and the decision it touches before anything else.'},
+ {q:'Does it use personal data?',w:1,yes:1,tip:'Check lawful basis, minimise the data used and complete a data protection impact assessment where needed.'},
+ {q:'Can it act without a person reviewing the result?',w:2,yes:1,tip:'Add a human review step for outcomes that matter, with authority to override.'},
+ {q:'Can you explain in plain language why it gave an answer?',w:2,yes:0,tip:'Add explanations a non-specialist can read, and keep a record of the reasoning.'},
+ {q:'Is there a named owner and a way to challenge an outcome?',w:2,yes:0,tip:'Name one accountable owner and publish a simple route to challenge a result.'},
+ {q:'Is it monitored for errors and bias after launch?',w:1,yes:0,tip:'Set up regular checks on accuracy and on differences between groups, and act on them.'}
+];
+var chk={i:0,a:[],score:0,shown:0,needle:0,tgt:0,done:false};
+function chkDraw(){
+  var b=$('chkBody');
+  if(chk.done){return chkResult()}
+  var q=QS[chk.i];
+  b.innerHTML='<div class="bar"><i id="chkBar" style="width:'+(chk.i/QS.length*100)+'%"></i></div><div class="qbox"><div class="qn">Question '+(chk.i+1)+' of '+QS.length+'</div><div class="q">'+q.q+'</div><div class="yn"><button class="btn pri" data-a="1">Yes</button><button class="btn" data-a="0">No</button><button class="btn" data-a="u">Not sure</button></div></div>';
+  requestAnimationFrame(function(){var e=$('chkBar');if(e)e.style.width=((chk.i+1)/QS.length*100)+'%'});
+  b.querySelectorAll('.btn').forEach(function(x){x.onclick=function(){chkAnswer(x.dataset.a)}});
+}
+function chkAnswer(a){
+  var q=QS[chk.i],r=0;
+  if(a==='u')r=q.w;else r=(+a===q.yes)?q.w:0;
+  chk.a.push({r:r,a:a});chk.score+=r;chk.i++;
+  if(chk.i>=QS.length){chk.done=true;chk.tgt=chk.score/10;chk.needle=0;chkResult()}else chkDraw();
+}
+function chkTier(s){if(s<=2)return['Low concern','#178157','Keep it light, keep it documented.'];if(s<=5)return['Needs safeguards','#e0a020','Fine to proceed once the gaps below are closed.'];if(s<=7)return['High concern','#e07a30','Treat this as a governed system with named accountability.'];return['Pause and review','#d8455f','Do not go live until the gaps below are closed and signed off.']}
+function chkResult(){
+  var t=chkTier(chk.score),gaps=[];QS.forEach(function(q,i){if(chk.a[i]&&chk.a[i].r>0)gaps.push({tip:q.tip,r:chk.a[i].r})});gaps.sort(function(a,b){return b.r-a.r});
+  var li=gaps.slice(0,3).map(function(g,i){return '<li style="animation-delay:'+(.5+i*.25)+'s">'+g.tip+'</li>'}).join('');
+  if(!li)li='<li style="animation-delay:.5s">Nothing stands out. Keep reviewing it as the use case changes.</li>';
+  $('chkBody').innerHTML='<div class="res"><div><canvas id="gCv" height="190"></canvas></div><div><div class="tier" style="color:'+t[1]+'">'+t[0]+'</div><div style="color:var(--muted);margin-top:2px">'+t[2]+'</div><ul class="steps">'+li+'</ul><p style="margin:12px 0 0"><button class="btn" id="chkAgain">Start again</button></p></div></div>';
+  $('chkAgain').onclick=function(){chk={i:0,a:[],score:0,needle:0,tgt:0,done:false};chkDraw()};
+  chk.g=fit($('gCv'));
+}
+FR.chk=function(dt){
+  if(cur!=='chk'||!chk.done||!chk.g)return;var f=chk.g,x=f.x,w=f.w,h=f.h,cx=w/2,cy=h-18,R=Math.min(w/2-14,h-34);
+  chk.needle+=(chk.tgt-chk.needle)*Math.min(1,dt*2.2);x.clearRect(0,0,w,h);
+  var cols=['#178157','#e0a020','#e07a30','#d8455f'];
+  for(var i=0;i<4;i++){var a0=Math.PI+i*Math.PI/4,a1=a0+Math.PI/4-.04;x.strokeStyle=cols[i];x.globalAlpha=.85;x.lineWidth=16;x.lineCap='butt';x.beginPath();x.arc(cx,cy,R,a0,a1);x.stroke()}
+  x.globalAlpha=1;var an=Math.PI+chk.needle*Math.PI;x.strokeStyle=CK.ink;x.lineWidth=4;x.lineCap='round';x.beginPath();x.moveTo(cx,cy);x.lineTo(cx+Math.cos(an)*(R-22),cy+Math.sin(an)*(R-22));x.stroke();
+  x.fillStyle=CK.ink;x.beginPath();x.arc(cx,cy,8,0,6.283);x.fill();
+  x.fillStyle=CK.muted;x.font='600 12px '+FONT;x.textAlign='center';x.fillText('Risk score '+Math.round(chk.needle*10)+' of 10',cx,cy-R*.35);
+};
+
+/* ---------------- 3 Value Chain ---------------- */
+var THM=[
+ ['Strategic alignment','Data work tied to what the organisation is trying to do'],
+ ['Data governance','Owned, defined and quality-checked data'],
+ ['AI governance','Explainable, accountable, human-led AI'],
+ ['Data products and delivery','Products people use, delivered at scale'],
+ ['Mentoring and capability','Growing people and skills'],
+ ['Research and thought leadership','Evidence, publishing and teaching']
+];
+var VCS=[
+ {n:'Reporting estate',t:[
+   ['Need','Around 950 reports at UEL, with duplication and low-value reports.'],
+   ['What was done','Rationalised the reporting estate around a governed model.'],
+   ['What came out','A focused core of about 200 reports.'],
+   ['What changed','Effort goes to information that supports real business needs. Escalations went from daily in January to none from March 2026.'],
+   ['Who benefits','Senior leaders, report users and the data team.']],
+  val:'Less noise, faster decisions, and less time spent firefighting.',th:[1,3,0],link:['Business impact','#impact'],basis:'Basis: UEL role records, as reported by the employer. Approximate, not independently audited.'},
+ {n:'Network capacity',t:[
+   ['Need','Network demand growing faster than capacity.'],
+   ['What was done','AI-enabled capacity forecasting, ranking models and automation, for ZTE and Ooredoo.'],
+   ['What came out','Forecasts and an upgrade order based on where pressure was highest.'],
+   ['What changed','A reported 34% network KPI improvement and 18% monthly revenue improvement.'],
+   ['Who benefits','Network operations and the business.']],
+  val:'Investment goes where it lifts the network most.',th:[3,0],link:['Business impact','#impact'],basis:'Basis: role descriptions on the site, as reported. Not independently audited.'},
+ {n:'3,600-site upgrade',t:[
+   ['Need','A large upgrade with performance and capacity targets.'],
+   ['What was done','Co-led performance and capacity outcomes across the programme.'],
+   ['What came out','3,600 sites upgraded.'],
+   ['What changed','Delivered in eight months.'],
+   ['Who benefits','Network teams and the operator.']],
+  val:'Delivery at scale, to a deadline, with measurable outcomes.',th:[3,0],link:['Business impact','#impact'],basis:'Basis: role descriptions on the site, as reported.'},
+ {n:'STRAP',t:[
+   ['Need','A way to see which students may need support, and why.'],
+   ['What was done','Built explainable student-risk insights, with accountable, staff-led support.'],
+   ['What came out','A working STRAP and HEPI practice document, developed with UEL\'s Dean of Students.'],
+   ['What changed','Staff act with the reasons in front of them, and a person owns each decision.'],
+   ['Who benefits','Students, and the staff who support them.']],
+  val:'AI that supports people without replacing their judgement.',th:[2,3],link:['Expertise','#expertise'],basis:'Basis: STRAP description on the site.'},
+ {n:'Learning quality',t:[
+   ['Need','Quality and accessibility of virtual-learning modules, at scale.'],
+   ['What was done','Audited 700+ virtual-learning modules at UEL in 2024.'],
+   ['What came out','A review of quality and accessibility across modules.'],
+   ['What changed','Evidence the university can act on.'],
+   ['Who benefits','Students and teaching staff.']],
+  val:'Quality checked with evidence, not assumed.',th:[3,4],link:['Business impact','#impact'],basis:'Basis: role description on the site, 2024.'}
+];
+var vc={i:0,built:false};
+function vcSel(i){
+  vc.i=i;var v=VCS[i];
+  document.querySelectorAll('#vcChips .chip').forEach(function(c,j){c.classList.toggle('on',j===i)});
+  var cols=[DEEP[0],DEEP[1],DEEP[2],DEEP[3],DEEP[5]];
+  $('vcRow').innerHTML=v.t.map(function(s,k){return '<div class="vcc" style="animation-delay:'+(k*.14)+'s"><small style="color:rgb('+cols[k]+')">'+s[0]+'</small><p>'+s[1]+'</p></div>'}).join('');
+  $('vcVal').innerHTML='<b>Why it matters to a leader:</b> '+v.val;
+  var t=$('vcTags');t.innerHTML='<span>Connects to</span>';
+  v.th.forEach(function(ti){var b=document.createElement('button');b.className='chip';b.textContent=THM[ti][0];b.onclick=function(){go('prin');prinSel(ti)};t.appendChild(b)});
+  var a=document.createElement('a');a.href=SITE+v.link[1];a.target='_blank';a.rel='noopener';a.textContent=v.link[0]+' on the site ↗';a.style.cssText='color:var(--blue);font-weight:600;text-decoration:none;margin-left:6px';t.appendChild(a);
+  $('vcBasis').textContent=v.basis;
+}
+INIT.map=function(){
+  if(!vc.built){vc.built=true;var c=$('vcChips');VCS.forEach(function(v,i){var b=document.createElement('button');b.className='chip';b.textContent=v.n;b.onclick=function(){vcSel(i)};c.appendChild(b)})}
+  vcSel(vc.i);
+};
+
+/* ---------------- 4 Ask the work ---------------- */
+var KB=[
+ {k:'value valuable delivered deliver head products product impact lead leads led results achieved achievement',t:'As Head of Data Products at the University of East London since 2024, he leads BI, the Data Lake, student-retention analytics and AI workstreams. The reporting estate went from around 950 reports to a focused core of about 200, escalations went from daily in January to none from March 2026, and the work was recognised with the 2026 Vice-Chancellor and President\'s Service Excellence Award.',s:[['Business impact','#impact'],['Recognition','#recognition']]},
+ {k:'strategy strategic align alignment aligned roadmap roadmaps business case cases outcomes institutional direction vision',t:'AI and data strategy work focuses on roadmaps, business cases and institutional outcomes. The leadership capabilities listed on the site are AI and data strategy, responsible governance, leadership enablement, delivery and adoption, and team building. At ZTE this included weekly and monthly recommendations to senior management.',s:[['Expertise','#expertise'],['Career journey','#journey']]},
+ {k:'governance governed govern responsible ai ethics explain explainability accountability oversight trust data compliance risk paila safeguards',t:'Governance is both practice and research. A PhD via MPhil at UEL is designing and validating a responsible AI governance framework for UK higher education. In practice, STRAP connects explainable student-risk insights with accountable, staff-led support, and PAILA safeguards cover acceptance criteria, monitoring and failure handling.',s:[['Research','#research'],['Expertise','#expertise']]},
+ {k:'evidence evidenced proof prove measurable measured figures numbers basis audited reported credible',t:'Every figure on the site carries a basis note: approximate, as reported by the employer, not independently audited. Reported results include about 950 to about 200 reports, a 34% network KPI improvement, a 3,600-site upgrade in eight months, and 700+ virtual-learning modules audited.',s:[['Business impact','#impact']]},
+ {k:'mentor mentoring mentored team teams build building people capability grow develop coach coaching teach teaching lecture lecturer training',t:'Mentoring and teaching run alongside the data work: 12+ engineers mentored at ZTE and colleagues and students since, AI, Big Data and Power BI taught at UEL, an invited guest lecture on 23 July 2026, and team building is one of the leadership capabilities.',s:[['Teaching and talks','#speaking'],['Expertise','#expertise']]},
+ {k:'grade level senior director chief cdo officer seniority experience years career journey roles role history jio ericsson teoco aircel uel zte',t:'More than 17 years across telecom and higher education, from radio networks and customer experience to institutional data products and responsible AI, across India, Myanmar and the UK. Currently Head of Data Products at UEL, with Chartered Engineer (India) status and an MSc in AI with a Dean\'s Prize.',s:[['Career journey','#journey'],['Credentials','#credentials']]},
+ {k:'report reports reporting rationalisation 950 200 power bi bi estate noise escalation escalations',t:'At UEL the reporting estate was rationalised from around 950 reports to a focused core of about 200, so effort goes to information that supports real business needs. Escalations went from frequent daily ones in January to none from March 2026.',s:[['Business impact','#impact']]},
+ {k:'telecom network capacity zte ooredoo forecast forecasting upgrade sites kpi revenue',t:'In telecom, AI-enabled capacity enhancement, forecasting and automation contributed to a reported 34% network KPI improvement and 18% monthly revenue improvement for ZTE and Ooredoo. He co-led a 3,600-site upgrade delivered in eight months.',s:[['Business impact','#impact'],['Journey','#journey']]},
+ {k:'award awards recognition prize service excellence ace dean best achiever',t:'Recognition includes the 2026 Vice-Chancellor and President\'s Service Excellence Award at UEL, the Dean\'s Prize for the MSc in AI (93%), the ZTE Outstanding Supervisor Manager award, and the Ericsson ACE Award.',s:[['Recognition','#recognition']]},
+ {k:'credential credentials chartered fellow fellowship engineer iei iete adobe msc degree qualification qualifications certificate certificates courses',t:'Credentials include Chartered Engineer (India), Fellow of the Institution of Engineers (India), Fellow of IETE, Adobe Education Institute Fellow, and an MSc in Artificial Intelligence with a Dean\'s Prize. Certificates are grouped by theme on the learning pages.',s:[['Credentials','#credentials'],['Learning','#learning']]},
+ {k:'research phd thesis book livermets mphil publication',t:'Doctoral research is in progress on turning AI ethics into practical governance, transparency, accountability and human oversight. There is also a book project, The Art of Explainability, and applied work on LiverMets.',s:[['Research','#research']]},
+ {k:'student retention strap risk support hepi dean of students',t:'STRAP connects explainable student-risk insights with accountable, staff-led support, with a working STRAP and HEPI practice document developed with UEL\'s Dean of Students.',s:[['Expertise','#expertise'],['Research','#research']]},
+ {k:'100 days first plan join joined start starting onboarding would do arrive',t:'The Role Lens sets out a first-100-days plan for four roles: Director of Data, Senior Director, Chief of Staff and Chief AI Officer. Each phase rests on something already done, such as the reporting estate rationalisation, the PAILA safeguards and the weekly and monthly recommendations to senior management at ZTE.',s:[['Role Lens','@rl'],['Operating Rhythm','@or']]},
+ {k:'chief staff rhythm cadence operating model forum forums meetings run running coordination coordinate agenda',t:'The operating rhythm runs weekly service checks and insight briefs, monthly KPI reviews and a data and AI governance board, quarterly portfolio reviews and an annual strategy refresh. Precedents include weekly and monthly recommendations to senior management at ZTE, and cross-team coordination that took UEL reporting escalations from daily to none.',s:[['Operating Rhythm','@or'],['Career journey','#journey']]},
+ {k:'cao caio chief ai officer ai strategy board guardrails adoption',t:'For a Chief AI Officer role, the evidence is doctoral research on a responsible AI governance framework, STRAP\'s explainable and staff-led design, PAILA\'s acceptance criteria, monitoring and failure handling, and Responsible AI study with Google and Rutgers. The Role Lens shows the fit and a first-100-days plan.',s:[['Role Lens','@rl'],['Research','#research']]},
+ {k:'invest investment prioritise prioritize prioritisation priority priorities portfolio fund funding budget trade off tradeoff',t:'Investment has been prioritised with evidence: ML ranking, risk and cost models set the order of network upgrades at ZTE, and operational analysis became annual plans and investment recommendations at TEOCO. The Portfolio Lens shows the method, and Compounding Value shows why foundations come first.',s:[['Portfolio Lens','@pf'],['Compounding Value','@cv']]},
+ {k:'future growth next horizon maturity where heading direction vision transform transformation',t:'At UEL the move so far is from a fragmented estate of around 950 reports to a governed core of about 200, with no reporting escalations from March 2026. The next step is self-serve data products and AI in monitored use under a governance framework. Maturity Horizons shows the steps.',s:[['Maturity Horizons','@mh'],['Strategy to Value','@sv']]},
+ {k:'contact connect hire collaborate speak talk talks speaking invite linkedin',t:'To discuss a talk, a teaching collaboration or a project, use the connect section of the site, or the LinkedIn profile linked there.',s:[['Connect','#connect'],['Teaching and talks','#speaking']]}
+];
+var SUG=['What value has he delivered as Head of Data Products?','How does he align data work with strategy?','How does he decide where to invest?','How does he approach AI and data governance?','What would his first 100 days look like?','How would he run the leadership rhythm?','What impact can be evidenced?','What does he bring at director or chief data level?'];
+var askT=0,askB=false;
+INIT.ask=function(){
+  if(askB)return;askB=true;var c=$('askChips');
+  SUG.forEach(function(s){var b=document.createElement('button');b.className='chip';b.textContent=s;b.onclick=function(){$('askIn').value=s;ask(s)};c.appendChild(b)});
+  $('askForm').onsubmit=function(e){e.preventDefault();ask($('askIn').value)};
+};
+var STOP='a an the of and or to in on for with is are was were has have had what how which who does do did he his him her about me my tell work at as by from it its this that be can could would should his can'.split(' ');
+function ask(q){
+  q=(q||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ');var tk=q.split(/\s+/).filter(function(w){return w&&STOP.indexOf(w)<0});
+  var sc=KB.map(function(e,i){var kw=e.k.split(' '),s=0;tk.forEach(function(w){kw.forEach(function(k){if(k===w)s+=2;else if(w.length>3&&k.length>3&&(k.indexOf(w)===0||w.indexOf(k)===0))s+=1})});return{i:i,s:s}}).filter(function(o){return o.s>0}).sort(function(a,b){return b.s-a.s||a.i-b.i});
+  var box=$('askAns'),id=++askT;
+  if(!sc.length){box.innerHTML='<p>That is not covered on this site yet. Try asking about value delivered, strategy, investment, governance, the first 100 days, mentoring or seniority.</p>';return}
+  var top=sc.filter(function(o,k){return k===0||(k===1&&o.s>=sc[0].s*.75)}).map(function(o){return KB[o.i]}),text=top.map(function(e){return e.t}).join(' ');
+  var links=[];top.forEach(function(e){e.s.forEach(function(l){if(!links.some(function(m){return m[1]===l[1]}))links.push(l)})});
+  var p=document.createElement('p');box.innerHTML='';box.appendChild(p);
+  var i=0;
+  function done(){var d=document.createElement('div');d.className='src';d.innerHTML=links.map(function(l,k){return l[1][0]==='@'?'<button data-go="'+l[1].slice(1)+'" style="animation-delay:'+(k*.12)+'s">'+l[0]+' →</button>':'<a href="'+SITE+l[1]+'" target="_blank" rel="noopener" style="animation-delay:'+(k*.12)+'s">'+l[0]+' ↗</a>'}).join('');box.appendChild(d);d.querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go)}})}
+  if(reduce){p.textContent=text;done();return}
+  var cur2=document.createElement('span');cur2.className='cur';
+  (function step(){if(id!==askT)return;p.textContent=text.slice(0,i);p.appendChild(cur2);i+=3;if(i<=text.length+2)setTimeout(step,16);else{cur2.remove();p.textContent=text;done()}})();
+}
+
+/* ---------------- 5 Trust Chain ---------------- */
+var TL=[
+ {n:'Trusted data',s:'Data',c:['Source has a named owner','Definition agreed','Quality tested','Refreshed on schedule']},
+ {n:'Explainable insight',s:'Insight',c:['Method documented','Reasons shown with the result','Limits stated']},
+ {n:'Human action',s:'Action',c:['Decision owner named','Result can be challenged','Outcome reviewed afterwards']}
+];
+var TCX=[
+ {n:'Retention report',d:'Where to direct student support',on:[[1,1,1,0],[1,1,0],[1,1,1]]},
+ {n:'Reporting estate',d:'Which reports to retire',on:[[1,1,1,1],[1,0,1],[1,1,0]]},
+ {n:'Network KPI',d:'Where to upgrade first',on:[[1,1,0,1],[1,1,1],[0,1,1]]},
+ {n:'A new AI tool',d:'Whether to rely on its output',on:[[0,0,0,0],[0,0,0],[0,0,0]]}
+];
+var tc={x:0,on:[],f:null,ps:[],acc:0,built:false,pl:0};
+function tcStr(k){var a=tc.on[k];return a.reduce(function(s,v){return s+v},0)/a.length}
+function tcCol(s){return s>=.75?'50,175,125':s>=.5?'235,160,50':'224,82,110'}
+function tcBuild(){
+  var pre=$('tcPre');
+  TCX.forEach(function(c,i){var b=document.createElement('button');b.className='chip';b.textContent=c.n;b.onclick=function(){tcPick(i)};pre.appendChild(b)});
+  var cols=$('tcCols');
+  TL.forEach(function(l,k){
+    var d=document.createElement('div');d.className='mini';
+    d.innerHTML='<h3>'+(k+1)+' '+l.n+'</h3><div class="meter"><i id="tcm'+k+'"></i></div>'+l.c.map(function(t,j){return '<label class="ck"><input type="checkbox" data-k="'+k+'" data-j="'+j+'"><span>'+t+'</span></label>'}).join('');
+    cols.appendChild(d);
+  });
+  cols.querySelectorAll('input').forEach(function(i){i.onchange=function(){tc.on[+i.dataset.k][+i.dataset.j]=i.checked?1:0;document.querySelectorAll('#tcPre .chip').forEach(function(c){c.classList.remove('on')});tcCalc()}});
+  tc.built=true;
+}
+function tcPick(i){
+  tc.x=i;tc.on=TCX[i].on.map(function(a){return a.slice()});
+  document.querySelectorAll('#tcPre .chip').forEach(function(c,j){c.classList.toggle('on',j===i)});
+  document.querySelectorAll('#tcCols input').forEach(function(e){e.checked=!!tc.on[+e.dataset.k][+e.dataset.j]});
+  tcCalc();
+}
+function tcCalc(){
+  var s=[0,1,2].map(tcStr),mn=Math.min.apply(null,s),wk=s.indexOf(mn);
+  [0,1,2].forEach(function(k){var m=$('tcm'+k);m.style.width=Math.round(s[k]*100)+'%';m.style.background='rgb('+tcCol(s[k])+')'});
+  var v=mn>=.75?['Safe to act','50,175,125']:mn>=.5?['Act with review','235,160,50']:['Pause and fix the weakest link','224,82,110'];
+  var miss=[];tc.on[wk].forEach(function(o,j){if(!o)miss.push(TL[wk].c[j].toLowerCase())});
+  var ctx=tc.x>=0&&TCX[tc.x]?TCX[tc.x].d:'this decision';
+  var msg;
+  if(mn>=.99)msg='Every link holds. The decision "'+ctx+'" can go ahead, with an owner and a record.';
+  else msg='Decision: '+ctx+'. The weakest link is <b>'+TL[wk].n.toLowerCase()+'</b> ('+Math.round(s[wk]*TL[wk].c.length)+' of '+TL[wk].c.length+' checks). Still missing: '+miss.join(', ')+'.';
+  $('tcVerdict').innerHTML='<div class="vbadge" style="background:rgb('+v[1]+')">'+v[0]+'</div><p>'+msg+'</p>';
+  tc.s=s;tc.mn=mn;tc.wk=wk;
+}
+INIT.trust=function(){
+  if(!tc.built){tcBuild();tcPick(0)}
+  tc.f=fit($('tcCv'));tc.ps=[];
+};
+FR.trust=function(dt){
+  var f=tc.f;if(!f||!tc.s)return;
+  var x=f.x,w=f.w,h=f.h;x.clearRect(0,0,w,h);
+  var xs=[w*.16,w*.5,w*.84],cy=h/2,R=Math.min(34,w*.085),s=tc.s;
+  // connectors
+  for(var k=0;k<2;k++){
+    var a=xs[k]+R+4,b=xs[k+1]-R-4,ok=s[k]>=.5;
+    x.lineWidth=3;x.lineCap='round';
+    if(ok){x.strokeStyle='rgba('+tcCol(s[k])+',.55)';x.beginPath();x.moveTo(a,cy);x.lineTo(b,cy);x.stroke()}
+    else{var m=(a+b)/2;x.strokeStyle='rgba(224,82,110,.65)';x.setLineDash([4,6]);x.beginPath();x.moveTo(a,cy);x.lineTo(m-8,cy);x.moveTo(m+8,cy);x.lineTo(b,cy);x.stroke();x.setLineDash([]);
+      x.strokeStyle='rgb(224,82,110)';x.lineWidth=3;x.beginPath();x.moveTo(m-6,cy-9);x.lineTo(m+6,cy+9);x.moveTo(m+6,cy-9);x.lineTo(m-6,cy+9);x.stroke()}
+  }
+  // particles along the whole chain, stopping at the first broken connector
+  tc.acc+=dt*(8+14*tc.mn);
+  while(tc.acc>1){tc.acc--;tc.ps.push({p:0,y:(Math.random()-.5)*12,sp:.2+Math.random()*.08})}
+  var stop=s[0]<.5?.25:s[1]<.5?.75:2,pc=tcCol(tc.mn);
+  for(var i=tc.ps.length-1;i>=0;i--){
+    var q=tc.ps[i];q.p+=q.sp*dt;
+    if(q.p>=stop-.02&&stop<2){tc.ps.splice(i,1);continue}
+    if(q.p>=.98){tc.ps.splice(i,1);tc.pl=1;continue}
+    x.fillStyle='rgba('+pc+',.85)';x.fillRect(Math.round(lerp(xs[0],xs[2],q.p)-2),Math.round(cy+q.y-2),4,4);
+  }
+  // nodes with strength rings
+  for(var n=0;n<3;n++){
+    var X=xs[n];
+    if(n===2&&tc.pl>0){x.strokeStyle='rgba('+pc+','+tc.pl*.5+')';x.lineWidth=4;x.beginPath();x.arc(X,cy,R+4+10*(1-tc.pl),0,6.283);x.stroke();tc.pl=Math.max(0,tc.pl-dt*.9)}
+    x.fillStyle=CK.box;x.beginPath();x.arc(X,cy,R,0,6.283);x.fill();
+    x.strokeStyle='rgba('+rgb(CK.noise)+',.35)';x.lineWidth=6;x.beginPath();x.arc(X,cy,R-3,0,6.283);x.stroke();
+    x.strokeStyle='rgb('+tcCol(s[n])+')';x.lineWidth=6;x.lineCap='round';x.beginPath();x.arc(X,cy,R-3,-Math.PI/2,-Math.PI/2+s[n]*6.283);x.stroke();
+    x.fillStyle=CK.ink;x.textAlign='center';x.font='700 '+(w<500?11:13)+'px '+FONT;x.fillText(TL[n].s,X,cy+4);
+    x.fillStyle=CK.muted;x.font='500 11px '+FONT;x.fillText(Math.round(s[n]*TL[n].c.length)+' of '+TL[n].c.length,X,cy+R+18);
+  }
+  if(tc.wk!=null&&tc.mn<.99){var X2=xs[tc.wk];x.fillStyle='rgb(224,82,110)';x.font='700 11px '+FONT;x.fillText('weakest link',X2,cy-R-10)}
+  x.textAlign='left';
+};
+
+/* ---------------- 6 Estate ---------------- */
+var es={t:0,f:null,ins:[],outs:[],built:false,ph:-1,esc:false,L:0,M:0,R:0};
+var EST_T=14.5;
+INIT.est=function(){
+  var cv=$('estCv');cv.setAttribute('height',cv.clientWidth<520?340:380);
+  var f=fit(cv);es.f=f;var w=f.w,h=f.h,i;
+  var L0=w*.02,L1=w*.35,R0=w*.66,R1=w*.98,top=44,bot=h-78;
+  es.hub=[w*.505,(top+bot)/2];es.L0=L0;es.L1=L1;es.R0=R0;es.R1=R1;
+  es.ins=[];
+  var cc=[[.2,.2],[.5,.18],[.8,.2],[.22,.55],[.52,.6],[.82,.55],[.3,.88],[.7,.9]];
+  for(i=0;i<950;i++){
+    var c=i%cc.length,jx=(hash(i,1.7)+hash(i,2.9)-1),jy=(hash(i,4.1)+hash(i,5.3)-1);
+    es.ins.push({hx:L0+(L1-L0)*(cc[c][0]*.82+.09+jx*.12),hy:top+(bot-top)*(cc[c][1]*.88+.06+jy*.1),leave:1.8+hash(i,7.7)*3.6,c:c%6,cx:(hash(i,9)-.5)*60,cy:(hash(i,3)-.5)*60});
+  }
+  var gs=Math.min((R1-R0)/20,(bot-top-10)/10),gx=R0+((R1-R0)-gs*20)/2,gy=(top+bot)/2-gs*5;
+  es.outs=[];
+  for(i=0;i<200;i++)es.outs.push({tx:gx+(i%20)*gs+gs/2,ty:gy+Math.floor(i/20)*gs+gs/2,em:6+i/200*2.6,sz:gs*.7});
+  if(!RS||!es.built)es.t=0;
+  if(!es.built){
+    es.built=true;
+    var d=$('escDots');for(i=0;i<24;i++)d.appendChild(document.createElement('i'));
+    $('estReplay').onclick=function(){es.t=0};
+    $('escJan').onclick=function(){escSet(false)};$('escMar').onclick=function(){escSet(true)};
+  }
+};
+function escSet(mar){
+  es.esc=mar;$('escDots').className='dots '+(mar?'mar':'jan');
+  $('escJan').classList.toggle('on',!mar);$('escMar').classList.toggle('on',mar);
+  $('escTxt').textContent=mar?'From March 2026: no escalations reported.':'January: frequent daily escalations.';
+}
+FR.est=function(dt){
+  var f=es.f;if(!f||!es.ins.length)return;
+  var x=f.x,w=f.w,h=f.h,t,i;
+  if(reduce)t=10.5;else{es.t=(es.t+dt)%EST_T;t=es.t}
+  var fadeIn=t>=12.6?(t-12.6)/1.9:-1;
+  x.clearRect(0,0,w,h);
+  var hub=es.hub,left=0,abs=0,out=0;
+  // zone captions
+  x.textAlign='center';x.fillStyle=CK.muted;x.font='700 11px '+FONT;
+  x.fillText('FRAGMENTED',(es.L0+es.L1)/2,22);x.fillText('ONE MODEL',hub[0],22);x.fillText('FOCUSED CORE',(es.R0+es.R1)/2,22);
+  // flow hints
+  x.strokeStyle=CK.track;x.lineWidth=2;x.setLineDash([3,6]);x.beginPath();x.moveTo(es.L1+8,hub[1]);x.lineTo(hub[0]-44,hub[1]);x.moveTo(hub[0]+44,hub[1]);x.lineTo(es.R0-8,hub[1]);x.stroke();x.setLineDash([]);
+  // incoming cells
+  for(i=0;i<950;i++){
+    var c=es.ins[i],al=1,px=c.hx,py=c.hy;
+    if(reduce){al=.22;left++}
+    else if(fadeIn>=0){al=fadeIn;left+=fadeIn*(1/1)>.5?1:0}
+    else{
+      var a=(t-c.leave)/1.0;
+      if(a<=0){left++}
+      else if(a<1){var e=ease(a);left++;px=lerp(c.hx,hub[0]+c.cx*.3,e)+Math.sin(e*3.14)*c.cx*.4;py=lerp(c.hy,hub[1]+c.cy*.3,e)+Math.sin(e*3.14)*c.cy*.4;if(a>.75)al=1-(a-.75)*4;if(a>.85)abs++}
+      else continue;
+    }
+    x.fillStyle='rgba('+PAS[c.c]+','+(.9*al)+')';x.fillRect(px-2,py-2,4,4);
+  }
+  if(fadeIn>=0)left=Math.round(950*fadeIn);
+  // hub
+  var glow=cl(abs/40)+(reduce?.3:0),hs=w<520?32:44;
+  x.shadowColor='rgba(70,150,235,'+(.55*glow)+')';x.shadowBlur=22*glow;
+  x.fillStyle=CK.box;x.strokeStyle='rgb('+DEEP[0]+')';x.lineWidth=2.5;rr(x,hub[0]-hs,hub[1]-hs,hs*2,hs*2,22);x.fill();x.stroke();x.shadowBlur=0;
+  x.fillStyle='rgb('+DEEP[0]+')';x.font='800 38px '+FONT;x.fillText('1',hub[0],hub[1]+8);
+  x.fillStyle=CK.muted;x.font='600 '+(w<520?9:11)+'px '+FONT;x.fillText(w<520?'model':'governed model',hub[0],hub[1]+28);
+  // outgoing cells
+  for(i=0;i<200;i++){
+    var o=es.outs[i],oa=0,ox=o.tx,oy=o.ty;
+    if(reduce){oa=1;out++}
+    else if(fadeIn>=0){oa=1-fadeIn;out+=oa>.5?1:0}
+    else{var b=(t-o.em)/.9;if(b<=0)continue;if(b<1){var e2=ease(b);ox=lerp(hub[0]+hs*.4,o.tx,e2);oy=lerp(hub[1],o.ty,e2);oa=Math.min(1,b*3)}else{oa=1;out++}}
+    x.fillStyle='rgba('+DEEP[0]+','+(.92*oa)+')';x.fillRect(ox-o.sz/2,oy-o.sz/2,o.sz,o.sz);
+  }
+  if(fadeIn>=0)out=Math.round(200*(1-fadeIn));
+  // big numbers
+  var ny=h-40;var nr=w<520;x.font='800 '+(nr?22:34)+'px '+FONT;x.fillStyle=CK.ink;
+  x.fillText(String(left),(es.L0+es.L1)/2,ny);x.fillText(out>=200?'about 200':String(out),(es.R0+es.R1)/2,ny);
+  x.fillStyle=CK.muted;x.font='600 12px '+FONT;
+  x.fillText(nr?'fragmented':'fragmented reports',(es.L0+es.L1)/2,ny+20);x.fillText(nr?'with a purpose':'reports with a purpose',(es.R0+es.R1)/2,ny+20);
+  if(!nr)x.fillText(t>=1.8&&t<6.4?'pulling in':t>=6&&t<8.8?'serving':'',hub[0],ny+20);
+  x.textAlign='left';
+  var ph=reduce?3:t<1.8?0:t<6?1:t<9?2:t<12.6?3:4;
+  if(ph!==es.ph){es.ph=ph;$('estTxt').textContent=['Around 950 reports, spread across separate sources.','Pulling the reports into one governed model, one definition for each measure.','The model serves a focused set of reports.','About 200 reports, down from around 950, each with a purpose.','Starting again.'][ph]}
+};
+
+/* ---------------- 7 Impact and Evidence ---------------- */
+var LVC={'Delivered':'#178157','Reported':'#0866dc','In research':'#7a55d8','On this site':'#088d93','In preparation':'#b57a00','Recognised':'#c2447a'};
+var PRE=[
+ {b:'Head of Data Products, University of East London, since 2024',t:'Leads BI, the Data Lake, student-retention analytics and AI workstreams.',lv:'Delivered',p:[0,1,3]},
+ {b:'Reporting estate: about 950 to about 200 reports',t:'Fewer reports, each with a clear purpose, built on a governed model.',lv:'Reported',p:[0,1,3]},
+ {b:'Escalations: daily in January, none from March 2026',t:'Reporting escalations stopped once the reports behind them could be trusted.',lv:'Reported',p:[1,3]},
+ {b:'Weekly and monthly recommendations to senior management',t:'Regular written recommendations with a named author, from the ZTE years.',lv:'Reported',p:[0]},
+ {b:'AI and data strategy',t:'Roadmaps, business cases and institutional outcomes.',lv:'On this site',p:[0,2]},
+ {b:'Basis notes on every figure',t:'Each number on the site says where it comes from and how firm it is.',lv:'On this site',p:[1,5]},
+ {b:'PAILA safeguards',t:'Acceptance criteria, monitoring and failure handling written into AI work.',lv:'Delivered',p:[1,2]},
+ {b:'STRAP: explainable, staff-led support',t:'Every student-risk insight comes with reasons, and a person decides the support.',lv:'Delivered',p:[2,3]},
+ {b:'Doctoral research',t:'A 40-source synthesis and a 122-source corpus feed a responsible AI governance framework for UK higher education.',lv:'In research',p:[2,5]},
+ {b:'The Art of Explainability',t:'A book on making models and metrics understandable to the people who rely on them.',lv:'In preparation',p:[2,5]},
+ {b:'Capacity forecasting and a 3,600-site upgrade',t:'Reported 34% network KPI improvement, and a large upgrade delivered in eight months.',lv:'Reported',p:[0,3]},
+ {b:'Service Excellence Award, 2026',t:'Vice-Chancellor and President\'s award, University of East London.',lv:'Recognised',p:[3]},
+ {b:'700+ virtual-learning modules audited',t:'A quality and accessibility review at UEL, 2024.',lv:'Reported',p:[3,4]},
+ {b:'Mentored 12+ engineers',t:'At ZTE, and colleagues and students since. Team building is a stated capability.',lv:'Reported',p:[4]},
+ {b:'Guest lecture, 23 July 2026',t:'AI Across Engineering Disciplines, University of East London. AI, Big Data and Power BI taught at UEL.',lv:'Delivered',p:[4,5]}
+];
+var pr={sel:0,built:false};
+function prinBuild(){
+  var L=$('prinL'),R=$('prinR');
+  THM.forEach(function(n,i){var b=document.createElement('button');b.className='pbtn';b.id='pb'+i;b.innerHTML=n[0]+'<small>'+n[1]+'</small>';b.onclick=function(){prinSel(i)};L.appendChild(b)});
+  PRE.forEach(function(e,i){
+    var d=document.createElement('div');d.className='ev';d.id='pe'+i;d.style.setProperty('--c',LVC[e.lv]);
+    d.innerHTML='<span class="lv" style="background:'+LVC[e.lv]+'26;color:'+LVC[e.lv]+'">'+e.lv+'</span><b>'+e.b+'</b>'+e.t;
+    R.appendChild(d);
+  });
+  $('prinLegend').innerHTML=Object.keys(LVC).map(function(k){return '<span class="lv" style="margin:0;background:'+LVC[k]+'26;color:'+LVC[k]+'">'+k+'</span>'}).join('');
+  pr.built=true;
+}
+function prinSel(i){
+  pr.sel=i;
+  THM.forEach(function(n,j){$('pb'+j).classList.toggle('on',j===i)});
+  PRE.forEach(function(e,j){var on=e.p.indexOf(i)>=0,d=$('pe'+j);d.style.display=on?'':'none';if(on){d.style.animation='none';void d.offsetWidth;d.style.animation=''}});
+  prinLines();
+}
+function prinLines(){
+  var svg=$('prinSvg'),wr=$('prinWrap');svg.innerHTML='';
+  if(wr.clientWidth<760)return;
+  var r0=wr.getBoundingClientRect(),b=$('pb'+pr.sel).getBoundingClientRect();
+  var x1=b.right-r0.left,y1=b.top+b.height/2-r0.top,h='';
+  PRE.forEach(function(e,j){
+    if(e.p.indexOf(pr.sel)<0)return;
+    var c=$('pe'+j).getBoundingClientRect(),x2=c.left-r0.left,y2=c.top+c.height/2-r0.top,mx=(x1+x2)/2;
+    var d='M'+x1+' '+y1+' C'+mx+' '+y1+' '+mx+' '+y2+' '+x2+' '+y2,col=LVC[e.lv];
+    h+='<path id="pp'+j+'" d="'+d+'" fill="none" stroke="'+col+'" stroke-opacity=".5" stroke-width="1.6"/>'+
+       '<circle r="3.6" fill="'+col+'"><animateMotion dur="2.4s" begin="'+(j*.25%1.8).toFixed(2)+'s" repeatCount="indefinite"><mpath href="#pp'+j+'"/></animateMotion></circle>'+
+       '<circle cx="'+x2+'" cy="'+y2+'" r="4" fill="'+col+'"/>';
+  });
+  svg.innerHTML=h;
+}
+INIT.prin=function(){if(!pr.built)prinBuild();prinSel(pr.sel)};
+
+/* ---------------- 8 Career Signal ---------------- */
+var CY0=2006,CY1=2027,CSTEP=.1,CN=Math.round((CY1-CY0)/CSTEP)+1;
+var CL=[
+ ['Network performance','Network',[[2006,.5],[2009,.8],[2012,1],[2015,.9],[2018,.4],[2020,.15],[2027,.05]]],
+ ['Capacity and analytics','Capacity',[[2008,.2],[2011,.6],[2014,.9],[2017,1],[2019,.7],[2022,.4],[2027,.2]]],
+ ['Programme delivery','Delivery',[[2009,.2],[2012,.5],[2016,.8],[2019,.9],[2022,.8],[2024,.7],[2027,.6]]],
+ ['Data products and BI','Data products',[[2016,.1],[2018,.5],[2020,.8],[2023,.9],[2024,1],[2027,1]]],
+ ['Responsible AI and research','Responsible AI',[[2019,.05],[2022,.3],[2024,.7],[2025,.9],[2026,1],[2027,1]]],
+ ['Mentoring','Mentoring',[[2010,.1],[2014,.3],[2019,.4],[2023,.6],[2025,.9],[2027,1]]]
+];
+var CE=[
+ [2006,2008,'Metrotelworks and Quad','India'],[2008,2009,'Alcatel-Lucent','India'],[2009,2011,'S TEL and Tata','India'],
+ [2011,2014,'Ericsson','India'],[2014,2016,'Aircel, with Ericsson','India'],[2016,2018,'Reliance Jio','India'],
+ [2018,2019,'TEOCO','Myanmar'],[2019,2023,'ZTE','Myanmar'],[2023,2024,'Study at the University of East London','UK'],
+ [2024,2027,'University of East London, Head of Data Products','UK']
+];
+var CC=[[2006,2018,'India',0],[2018,2023,'Myanmar',1],[2023,2027,'UK',2]];
+function carStr(a,y){
+  if(y<a[0][0])return a[0][1]*ease((y-(a[0][0]-1.5))/1.5);
+  for(var i=0;i<a.length-1;i++)if(y<=a[i+1][0])return lerp(a[i][1],a[i+1][1],ease((y-a[i][0])/(a[i+1][0]-a[i][0])));
+  return a[a.length-1][1];
+}
+CL.forEach(function(l){l.act=[];l.att=[];var m=0;for(var i=0;i<CN;i++){var v=carStr(l[2],CY0+i*CSTEP);l.act.push(v);m=Math.max(m,v);l.att.push(m)}});
+function carAt(arr,y){var k=(y-CY0)/CSTEP,i=Math.max(0,Math.min(CN-2,Math.floor(k)));return lerp(arr[i],arr[i+1],k-i)}
+var CVW=[['time','Timeline'],['country','By country'],['tel','Telecom lens'],['ai','Data and AI lens']];
+var CVD={
+ time:'Timeline: all six capabilities, 2006 to 2027.',
+ country:'By country: the same six capabilities inside India, Myanmar and the UK.',
+ tel:'Telecom lens: network performance, capacity and analytics, and programme delivery, up to 2023.',
+ ai:'Data and AI lens: data products, responsible AI and research, and mentoring, from 2016.'
+};
+var car={f:null,rv:0,hx:null,ci:-2,bound:false,view:'time',P:[]};
+function carPanels(){
+  var f=car.f,w=f.w,h=f.h,P=[];
+  if(car.view==='country'){
+    var C=[[2006,2018,'India'],[2018,2023,'Myanmar'],[2023,2027,'UK']];
+    if(w>=700){var g=14,pw=(w-28-2*g)/3;C.forEach(function(c,k){P.push({lanes:[0,1,2,3,4,5],d0:c[0],d1:c[1],x0:14+k*(pw+g),x1:14+k*(pw+g)+pw,t:50,b:h-12,title:c[2]+' · '+c[0]+' to '+(c[1]>=CY1?'now':c[1])})})}
+    else{var ph=(h-8)/3;C.forEach(function(c,k){P.push({lanes:[0,1,2,3,4,5],d0:c[0],d1:c[1],x0:14,x1:w-14,t:ph*k+34,b:ph*(k+1)-8,title:c[2]+' · '+c[0]+' to '+(c[1]>=CY1?'now':c[1])})})}
+  }else{
+    var lanes=car.view==='tel'?[0,1,2]:car.view==='ai'?[3,4,5]:[0,1,2,3,4,5],d0=car.view==='ai'?2016:CY0,d1=car.view==='tel'?2023:CY1;
+    P.push({lanes:lanes,d0:d0,d1:d1,x0:14,x1:w-14,t:62,b:h-14,ribbon:true,eras:true});
+  }
+  return P;
+}
+function carX(P,y){return P.x0+(y-P.d0)/(P.d1-P.d0)*(P.x1-P.x0)}
+function carCard(y,P){
+  var idx=-1;for(var i=0;i<CE.length;i++)if(y>=CE[i][0]&&y<CE[i][1])idx=i;
+  if(idx<0)idx=y>=CY1?CE.length-1:0;
+  var key=idx+car.view+(P?P.d0:'');
+  if(key===car.ci)return;car.ci=key;
+  var e=CE[idx],mid=Math.min(CY1,Math.max(CY0,(Math.max(e[0],P?P.d0:CY0)+Math.min(e[1],P?P.d1:CY1))/2));
+  var lanes=P?P.lanes:[0,1,2,3,4,5];
+  var top=lanes.map(function(k){return[CL[k][0],carAt(CL[k].act,mid)]}).sort(function(a,b){return b[1]-a[1]}).filter(function(a){return a[1]>.3}).slice(0,2).map(function(a){return a[0]});
+  $('carEra').innerHTML='<b>'+e[2]+'</b><span>'+e[0]+(e[1]>=CY1?' to now':' to '+e[1])+' · '+e[3]+'. Most active here: '+(top.length?top.join(' and '):'early foundations')+'.'+(e[1]>=CY1?' Doctoral research starts in 2026.':'')+'</span>';
+}
+function carDefault(){car.ci=-2;$('carEra').innerHTML='<b>'+CVD[car.view]+'</b><span>Move along the chart to read each period.</span>'}
+function carView(v){
+  car.view=v;document.querySelectorAll('#carView .chip').forEach(function(c,i){c.classList.toggle('on',CVW[i][0]===v)});
+  var cv=$('carCv');cv.setAttribute('height',v==='country'&&cv.clientWidth<700?800:470);
+  car.f=fit(cv);car.P=carPanels();car.rv=reduce?1:0;car.hx=null;carDefault();
+}
+INIT.car=function(){
+  var cv=$('carCv');
+  if(!car.bound){
+    car.bound=true;
+    var c=$('carView');CVW.forEach(function(v){var b=document.createElement('button');b.className='chip';b.textContent=v[1];b.onclick=function(){carView(v[0])};c.appendChild(b)});
+    var set=function(cx,cy){
+      var r=cv.getBoundingClientRect(),px=cx-r.left,py=cy-r.top,hit=null;
+      car.P.forEach(function(P,k){if(px>=P.x0-6&&px<=P.x1+6&&py>=P.t-34&&py<=P.b+6)hit=k});
+      if(hit==null){car.hx=null;return}
+      var P=car.P[hit];car.hx={p:hit,y:P.d0+cl((px-P.x0)/(P.x1-P.x0))*(P.d1-P.d0)};
+    };
+    cv.addEventListener('mousemove',function(e){set(e.clientX,e.clientY)});
+    cv.addEventListener('mouseleave',function(){car.hx=null;if(car.rv>=1)carDefault()});
+    cv.addEventListener('touchstart',function(e){set(e.touches[0].clientX,e.touches[0].clientY)},{passive:true});
+    cv.addEventListener('touchmove',function(e){set(e.touches[0].clientX,e.touches[0].clientY)},{passive:true});
+  }
+  if(RS&&car.f){var rv=car.rv;carView(car.view);car.rv=rv}else carView(car.view);
+};
+function carLane(x,P,k,i,reveal){
+  var l=CL[k],nl=P.lanes.length,lh=(P.b-P.t)/nl,base=P.t+(i+1)*lh-4,amp=Math.max(12,lh-(lh>40?22:14)),col=DEEP[k];
+  x.strokeStyle=CK.lane;x.lineWidth=1;x.beginPath();x.moveTo(P.x0,base);x.lineTo(P.x1,base);x.stroke();
+  var steps=120,dy=(P.d1-P.d0)/steps,y,X;
+  function path(arr,close){x.beginPath();x.moveTo(carX(P,P.d0),base);for(var s=0;s<=steps;s++){y=P.d0+s*dy;x.lineTo(carX(P,y),base-carAt(arr,y)*amp)}if(close){x.lineTo(carX(P,P.d1),base);x.closePath()}}
+  // attained: light shade, stays up
+  path(l.att,true);x.fillStyle='rgba('+col+',.17)';x.fill();
+  path(l.att,false);x.strokeStyle='rgba('+col+',.5)';x.lineWidth=1.3;x.stroke();
+  // current activity: darker shade
+  path(l.act,true);var g=x.createLinearGradient(0,base-amp,0,base);g.addColorStop(0,'rgba('+col+',.72)');g.addColorStop(1,'rgba('+col+',.22)');x.fillStyle=g;x.fill();
+  path(l.act,false);x.strokeStyle='rgb('+col+')';x.lineWidth=1.8;x.stroke();
+  x.fillStyle=CK.muted;x.font='600 11px '+FONT;x.textAlign='left';x.fillText((P.x1-P.x0<420)?l[1]:l[0],P.x0+2,base-lh+15);
+}
+FR.car=function(dt){
+  var f=car.f;if(!f||!car.P.length)return;
+  var x=f.x,w=f.w,h=f.h;
+  if(car.rv<1)car.rv=Math.min(1,car.rv+dt/4.2);
+  x.clearRect(0,0,w,h);
+  var single=car.P.length===1;
+  car.P.forEach(function(P,pi){
+    var edge=P.x0+car.rv*(P.x1-P.x0);
+    x.font='500 11px '+FONT;x.textAlign='center';
+    var span=P.d1-P.d0,st=span>10?4:span>4?2:1;
+    for(var yy=Math.ceil(P.d0/st)*st;yy<=P.d1;yy+=st){if(yy===2026&&span>15)continue;x.fillStyle=CK.tick;x.fillText(yy,carX(P,yy),P.ribbon?48:P.t-6)}
+    if(!P.ribbon){x.fillStyle=CK.ink;x.font='700 12.5px '+FONT;x.textAlign='left';x.fillText(P.title,P.x0,P.t-22)}
+    if(P.eras){x.strokeStyle=CK.lane;x.lineWidth=1;x.setLineDash([2,4]);CE.forEach(function(e){if(e[0]>P.d0&&e[0]<P.d1){var X=carX(P,e[0]);x.beginPath();x.moveTo(X,56);x.lineTo(X,P.b);x.stroke()}});x.setLineDash([])}
+    x.save();x.beginPath();x.rect(P.x0-2,0,edge-P.x0+3,h);x.clip();
+    if(P.ribbon){
+      var cc=['rgba(120,190,250,.5)','rgba(255,196,120,.55)','rgba(176,156,240,.5)'];
+      CC.forEach(function(c){
+        var a=Math.max(c[0],P.d0),b=Math.min(c[1],P.d1);if(b<=a)return;
+        var X0=carX(P,a),X1=carX(P,b);x.fillStyle=cc[c[3]];rr(x,X0+1,10,X1-X0-2,24,12);x.fill();
+        if(X1-X0>46){x.fillStyle='#17202e';x.font='700 12px '+FONT;x.textAlign='center';x.fillText(c[2],(X0+X1)/2,26)}
+      });
+    }
+    P.lanes.forEach(function(k,i){carLane(x,P,k,i)});
+    x.restore();
+    if(single&&P.d1>=2026&&P.d0<2026&&edge>=carX(P,2026)){var X26=carX(P,2026);x.strokeStyle='rgba(76,148,245,.7)';x.lineWidth=1.4;x.beginPath();x.moveTo(X26,34);x.lineTo(X26,P.b);x.stroke();x.fillStyle='rgb(76,148,245)';x.font='700 11px '+FONT;x.textAlign='right';x.fillText('PhD begins',X26-5,76)}
+    var hv=car.hx&&car.hx.p===pi?car.hx.y:(single&&car.rv<1?P.d0+car.rv*(P.d1-P.d0):null);
+    if(hv!=null){
+      var HX=carX(P,hv);x.strokeStyle=CK.ink;x.globalAlpha=.7;x.lineWidth=1.4;x.beginPath();x.moveTo(HX,36);x.lineTo(HX,P.b);x.stroke();x.globalAlpha=1;
+      var nl=P.lanes.length,lh=(P.b-P.t)/nl;
+      P.lanes.forEach(function(k,i){var base=P.t+(i+1)*lh-4,amp=Math.max(12,lh-(lh>40?22:14)),Y=base-carAt(CL[k].act,hv)*amp;x.fillStyle=CK.box;x.strokeStyle='rgb('+DEEP[k]+')';x.lineWidth=2;x.beginPath();x.arc(HX,Y,4.2,0,6.283);x.fill();x.stroke()});
+      carCard(hv,P);
+    }
+  });
+  x.textAlign='left';
+};
+
+/* ================= Strategy and growth ================= */
+
+/* ---------------- Strategy to Value ---------------- */
+var SVD=[
+ {n:'UEL, higher education',
+  g:[['Decision-ready leadership','Leaders act on one trusted version of the numbers.'],
+     ['Student success','Support reaches the students who need it, in time.'],
+     ['Reliable services','Reporting that people can depend on.'],
+     ['Responsible AI adoption','AI that is useful, safe and accountable.']],
+  b:[['Reporting estate rationalised','Duplicates and low-value reports retired around a governed model.',[0,2]],
+     ['BI and Data Lake','Strategic KPIs, student information, surveys, admissions and research-system reporting.',[0,1]],
+     ['STRAP','Explainable student-risk insight with staff-led support.',[1,3]],
+     ['PAILA','Requirements, accessibility, privacy and safeguards for an AI assistant.',[3,1]],
+     ['Service ownership','Clear owners and cross-team coordination for reporting services.',[2,0]]],
+  o:[['About 950 to about 200 reports','A focused core, each with a purpose.',[0,1]],
+     ['Daily escalations to none','From frequent daily escalations in January to none from March 2026.',[4,0]],
+     ['Staff-led, accountable support','A working STRAP and HEPI practice document with UEL\'s Dean of Students.',[2]],
+     ['Safeguards by design','Acceptance criteria, monitoring and failure handling for PAILA.',[3]],
+     ['Service Excellence Award, 2026','Recognised for strategic data leadership and institution-wide impact.',[0,1,4]]],
+  note:'Basis: UEL role records and project descriptions on the site, as reported by the employer. Grouping the work under goals is my own framing.'},
+ {n:'Telecom, ZTE and Ooredoo',
+  g:[['Network performance','A network that holds up under demand.'],
+     ['Revenue growth','Capacity goes where it earns most.'],
+     ['Capital efficiency','Upgrade money spent in the right order.'],
+     ['Delivery at scale','Large programmes land on time.']],
+  b:[['Capacity forecasting','Forecast demand before it hits the network.',[0,1]],
+     ['ML ranking, risk and cost models','Rank where an upgrade lifts the network most.',[2,1]],
+     ['Analytical tools into daily use','From requirements and proof of concept to operational use.',[0,3]],
+     ['Upgrade programme and business case','Co-led performance, capacity and business-case outcomes.',[3,2,0]],
+     ['Recommendations to senior management','Weekly and monthly, developing engineers along the way.',[2,3]]],
+  o:[['34% network KPI improvement','Reported for ZTE and Ooredoo.',[0,2]],
+     ['18% monthly revenue improvement','Reported for the programme.',[0,1]],
+     ['30% traffic, 22% revenue uplift','At capacity-constrained sites, TEOCO and Ooredoo.',[0,1]],
+     ['3,600 sites in eight months','Ooredoo upgrade programme, 2022 to 2023.',[3]],
+     ['12+ engineers mentored','Through practical analytical work and clear recommendations.',[4]]],
+  note:'Basis: figures reported by ZTE, TEOCO and Ooredoo for the programmes, as stated on the site. Not independently audited. Grouping the work under goals is my own framing.'}
+];
+var sv={c:0,sel:null,at:0,built:false,user:false,P:[]};
+function svHot(){
+  var D=SVD[sv.c],H={g:{},b:{},o:{}},s=sv.sel;if(!s)return null;
+  if(s[0]==='g'){H.g[s[1]]=1;D.b.forEach(function(b,i){if(b[2].indexOf(s[1])>=0)H.b[i]=1});D.o.forEach(function(o,i){if(o[2].some(function(bi){return H.b[bi]}))H.o[i]=1})}
+  if(s[0]==='b'){H.b[s[1]]=1;D.b[s[1]][2].forEach(function(g){H.g[g]=1});D.o.forEach(function(o,i){if(o[2].indexOf(s[1])>=0)H.o[i]=1})}
+  if(s[0]==='o'){H.o[s[1]]=1;D.o[s[1]][2].forEach(function(bi){H.b[bi]=1;D.b[bi][2].forEach(function(g){H.g[g]=1})})}
+  return H;
+}
+function svBuild(){
+  var D=SVD[sv.c];
+  document.querySelectorAll('#svCtx .chip').forEach(function(c,j){c.classList.toggle('on',j===sv.c)});
+  function card(t,i,x,k){return '<button class="svn" data-t="'+t+'" data-i="'+i+'"><b>'+x[0]+'</b><small>'+x[1]+'</small>'+(k?'<span class="svk">'+k+'</span>':'')+'</button>'}
+  $('svG').innerHTML=D.g.map(function(x,i){return card('g',i,x,'')}).join('');
+  $('svB').innerHTML=D.b.map(function(x,i){return card('b',i,x,'Serves: '+x[2].map(function(g){return D.g[g][0]}).join(', '))}).join('');
+  $('svO').innerHTML=D.o.map(function(x,i){return card('o',i,x,'From: '+x[2].map(function(b){return D.b[b][0]}).join(', '))}).join('');
+  document.querySelectorAll('#svW .svn').forEach(function(e){
+    var on=function(){sv.user=true;sv.sel=[e.dataset.t,+e.dataset.i];svPaint()};
+    e.addEventListener('mouseenter',on);e.addEventListener('focus',on);e.addEventListener('click',on);
+  });
+  $('svNote').textContent=D.note;
+  svPaths();svPaint();
+}
+function svPaths(){
+  var W=$('svW'),svg=$('svSvg'),D=SVD[sv.c];if(!W.offsetParent)return;
+  var r0=W.getBoundingClientRect(),P=[];
+  function box(t,i){var e=W.querySelector('.svn[data-t="'+t+'"][data-i="'+i+'"]').getBoundingClientRect();return{l:e.left-r0.left,r:e.right-r0.left,y:e.top-r0.top+e.height/2}}
+  D.b.forEach(function(b,bi){b[2].forEach(function(g){P.push({a:['g',g],b:['b',bi],p:box('g',g),q:box('b',bi)})})});
+  D.o.forEach(function(o,oi){o[2].forEach(function(bi){P.push({a:['b',bi],b:['o',oi],p:box('b',bi),q:box('o',oi)})})});
+  sv.P=P;
+  svg.setAttribute('viewBox','0 0 '+r0.width+' '+r0.height);
+  svg.innerHTML=P.map(function(L,k){var x1=L.p.r,y1=L.p.y,x2=L.q.l,y2=L.q.y,m=(x2-x1)/2;return '<path class="svl" id="svp'+k+'" d="M'+x1+','+y1+' C'+(x1+m)+','+y1+' '+(x2-m)+','+y2+' '+x2+','+y2+'"/>'}).join('')+'<g id="svDots"></g>';
+}
+function svPaint(){
+  var H=svHot(),D=SVD[sv.c],W=$('svW');
+  var col=sv.sel&&sv.sel[0]==='g'?DEEP[sv.sel[1]]:'8,102,220';
+  W.style.setProperty('--c','rgb('+col+')');
+  W.querySelectorAll('.svn').forEach(function(e){var h=H&&H[e.dataset.t][+e.dataset.i];e.classList.toggle('hot',!!h);e.classList.toggle('dim',!!H&&!h)});
+  var dots='';
+  sv.P.forEach(function(L,k){var e=$('svp'+k);if(!e)return;var on=H&&H[L.a[0]][L.a[1]]&&H[L.b[0]][L.b[1]];e.setAttribute('class','svl'+(on?' on':H?' off':''));if(on&&!reduce)dots+='<circle r="4" fill="rgb('+col+')"><animateMotion dur="1.8s" repeatCount="indefinite"><mpath href="#svp'+k+'"/></animateMotion></circle>'});
+  var g=$('svDots');if(g)g.innerHTML=dots;
+  var t;
+  if(!H)t='<b>Line of sight.</b> Every bet here serves at least one goal, and every outcome traces back to a bet. Work with no line to a goal is the first thing to question.';
+  else{var nm=function(arr,o){return Object.keys(o).map(function(i){return arr[i][0]})};
+    t='<b>'+nm(D.g,H.g).join(' + ')+'</b> → '+nm(D.b,H.b).join(', ')+' → <b>'+nm(D.o,H.o).join(', ')+'</b>.'}
+  $('svLine').innerHTML=t;
+}
+function svSet(c,sel){sv.c=c;sv.sel=sel||null;sv.at=0;sv.user=!!sel;svBuild()}
+INIT.sv=function(){
+  if(!sv.built){sv.built=true;var c=$('svCtx');SVD.forEach(function(d,i){var b=document.createElement('button');b.className='chip';b.textContent=d.n;b.onclick=function(){svSet(i)};c.appendChild(b)});
+    $('svW').addEventListener('mouseleave',function(){sv.user=false;sv.at=0})}
+  if(RS){svPaths();svPaint();return}
+  sv.user=false;sv.at=0;svBuild();
+};
+FR.sv=function(dt){if(sv.user||reduce)return;sv.at+=dt;if(sv.at>3.2){sv.at=0;var s=sv.sel;sv.sel=!s?['g',0]:(s[0]==='g'&&s[1]<3?['g',s[1]+1]:null);svPaint()}};
+
+/* ---------------- Portfolio Lens ---------------- */
+/* name, fit to [student success, efficiency, trust, innovation], readiness, reach, AI use case */
+var PFI=[
+ ['Rationalise the reporting estate',[.4,.95,.6,.2],.85,.9,0],
+ ['Governed model and Data Lake',[.6,.8,.85,.6],.6,1,0],
+ ['Student-risk insight (STRAP)',[.95,.3,.5,.7],.5,.6,1],
+ ['AI assistant (PAILA)',[.7,.45,.3,.95],.35,.7,1],
+ ['Survey and admissions reporting',[.6,.6,.45,.2],.8,.5,0],
+ ['Research-system reporting',[.3,.5,.55,.3],.7,.35,0],
+ ['Learning-module quality review',[.75,.3,.65,.25],.9,.45,0],
+ ['AI governance framework',[.5,.3,.95,.75],.55,.8,0]
+];
+var PRI=[['Balanced',[.25,.25,.25,.25]],['Student success',[.55,.15,.15,.15]],['Efficiency and cost',[.1,.6,.2,.1]],['Trust and compliance',[.15,.15,.55,.15]],['Innovation and AI',[.15,.1,.15,.6]]];
+var ACT={'Fund now':'8,102,220','Gate: readiness first':'235,160,50','Build readiness':'135,110,225','Next in line':'230,95,150','Quick win':'50,175,125','Park':'138,148,166'};
+var pf={p:0,n:4,gate:true,pos:[],hov:-1,ord:null,prev:null,built:false,f:null,t:0};
+function pfCalc(){
+  var w=PRI[pf.p][1],raw=PFI.map(function(it){return it[1].reduce(function(s,v,k){return s+v*w[k]},0)}),mn=Math.min.apply(0,raw),mx=Math.max.apply(0,raw);
+  var R=PFI.map(function(it,i){var v=.12+.8*(raw[i]-mn)/((mx-mn)||1);return{i:i,v:v,r:it[2],s:.65*v+.35*it[2],g:pf.gate&&it[4]&&it[2]<.6}});
+  var ord=R.slice().sort(function(a,b){return b.s-a.s}),k=0;
+  ord.forEach(function(o){o.f=!o.g&&k<pf.n;if(o.f)k++;o.act=o.f?'Fund now':o.g?'Gate: readiness first':o.v>=.5&&o.r<.6?'Build readiness':o.v>=.5?'Next in line':o.r>=.6?'Quick win':'Park'});
+  return ord;
+}
+function pfBase(){var p=pf.p;pf.p=0;var o=pfCalc().map(function(x){return x.i});pf.p=p;return o}
+function pfSet(p,n,gate){
+  if(p!=null)pf.p=p;if(n!=null)pf.n=n;if(gate!=null){pf.gate=gate;$('pfGate').checked=gate}
+  document.querySelectorAll('#pfPri .chip').forEach(function(c,j){c.classList.toggle('on',j===pf.p)});
+  document.querySelectorAll('#pfCap button').forEach(function(b){b.setAttribute('aria-pressed',+b.dataset.n===pf.n?'true':'false')});
+  var ord=pfCalc(),prev=pf.ord?pf.ord.map(function(x){return x.i}):null;pf.ord=ord;
+  $('pfRank').innerHTML=ord.map(function(o,k){var c=ACT[o.act];var mv=prev&&prev[k]!==o.i?' class="mv"':'';return '<li'+mv+'><span class="n" style="background:rgb('+c+')">'+(o.i+1)+'</span><div>'+PFI[o.i][0]+'<br><em style="background:rgba('+c+',.14);color:rgb('+c+')">'+o.act+'</em></div></li>'}).join('');
+  var base=pfBase(),moved=ord.filter(function(o,k){return base[k]!==o.i}).length,top=ord[0],gated=ord.filter(function(o){return o.g}).map(function(o){return PFI[o.i][0]});
+  var fund=ord.filter(function(o){return o.f}).map(function(o){return PFI[o.i][0]});
+  var f1=ord.filter(function(o){return o.f})[0],pn=pf.p?PRI[pf.p][0].charAt(0).toLowerCase()+PRI[pf.p][0].slice(1):'a balanced view';
+  var m=(pf.p?'With <b>'+pn+'</b> first, ':'In a balanced view, ')+'<b>'+PFI[top.i][0]+'</b> ranks highest. ';
+  if(top.g)m+='The governance gate holds it until the data underneath is ready, so the first funded call is <b>'+PFI[f1.i][0]+'</b>. ';
+  m+=pf.p?moved+' of 8 initiatives change place compared with a balanced view. ':'Pick a strategy to see the order move. ';
+  m+='Funding '+pf.n+' this quarter: '+fund.join(', ')+'.';
+  if(gated.length)m+=' Gated for now: '+gated.join(' and ')+'.';
+  m+=' The leadership job is to make the trade-off visible, then agree it.';
+  $('pfMsg').innerHTML=m;
+}
+function pfXY(o){var f=pf.f,L=46,B=34,T=16,Rr=14;return[L+(f.w-L-Rr)*o.r,T+(f.h-T-B)*(1-o.v)]}
+INIT.pf=function(){
+  if(!pf.built){pf.built=true;
+    var c=$('pfPri');PRI.forEach(function(p,i){var b=document.createElement('button');b.className='chip';b.textContent=p[0];b.onclick=function(){pfSet(i)};c.appendChild(b)});
+    document.querySelectorAll('#pfCap button').forEach(function(b){b.onclick=function(){pfSet(null,+b.dataset.n)}});
+    $('pfGate').onchange=function(){pfSet(null,null,this.checked)};
+    var cv=$('pfCv');
+    function hit(e){var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,best=-1,bd=1e9;pf.pos.forEach(function(p,i){var d=Math.hypot(p[0]-mx,p[1]-my);if(d<p[2]+6&&d<bd){bd=d;best=i}});pf.hov=best}
+    cv.addEventListener('mousemove',hit);cv.addEventListener('click',hit);cv.addEventListener('mouseleave',function(){pf.hov=-1});
+  }
+  var cv=$('pfCv');cv.setAttribute('height',cv.clientWidth<520?360:420);pf.f=fit(cv);
+  if(!RS||!pf.ord)pfSet();
+  var sc=pf.f.w<520?.75:1;
+  pf.ord.forEach(function(o){var p=pfXY(o);if(!pf.pos[o.i]||!RS)pf.pos[o.i]=[p[0],p[1],(14+PFI[o.i][3]*16)*sc]});
+};
+FR.pf=function(dt){
+  var f=pf.f;if(!f||!pf.ord)return;var x=f.x,w=f.w,h=f.h,L=46,B=34,T=16,Rr=14,sc=w<520?.75:1;pf.t+=dt;
+  x.clearRect(0,0,w,h);
+  var qx=L+(w-L-Rr)*.6,qy=T+(h-T-B)*.5;
+  x.fillStyle='rgba(8,102,220,.06)';x.fillRect(qx,T,w-Rr-qx,qy-T);
+  x.strokeStyle=CK.lane;x.lineWidth=1;x.setLineDash([4,5]);x.beginPath();x.moveTo(qx,T);x.lineTo(qx,h-B);x.moveTo(L,qy);x.lineTo(w-Rr,qy);x.stroke();x.setLineDash([]);
+  x.strokeStyle=CK.track;x.beginPath();x.moveTo(L,T);x.lineTo(L,h-B);x.lineTo(w-Rr,h-B);x.stroke();
+  x.font='800 11px '+FONT;x.fillStyle=CK.muted;x.textBaseline='top';
+  x.textAlign='right';x.fillText('INVEST NOW',w-Rr-8,T+6);x.fillText('QUICK WINS',w-Rr-8,qy+6);
+  x.textAlign='left';x.fillText('BUILD READINESS FIRST',L+8,T+6);x.fillText('PARK',L+8,qy+6);
+  x.font='600 12px '+FONT;x.textAlign='right';x.textBaseline='alphabetic';x.fillText('Readiness of data and delivery →',w-Rr,h-10);
+  x.save();x.translate(16,T);x.rotate(-Math.PI/2);x.textAlign='right';x.fillText('Value to this strategy →',0,0);x.restore();
+  if(pf.gate){x.strokeStyle='rgba(235,160,50,.8)';x.lineWidth=2;x.setLineDash([3,4]);x.beginPath();x.moveTo(qx,T);x.lineTo(qx,h-B);x.stroke();x.setLineDash([]);x.fillStyle='rgb(200,130,30)';x.font='800 10.5px '+FONT;x.textAlign='left';x.fillText('AI GATE',qx+5,h-B-6)}
+  var k=reduce?1:Math.min(1,dt*4);
+  pf.ord.forEach(function(o){var t=pfXY(o),p=pf.pos[o.i];p[0]=lerp(p[0],t[0],k);p[1]=lerp(p[1],t[1],k);p[2]=(14+PFI[o.i][3]*16)*sc});
+  pf.ord.slice().reverse().forEach(function(o){
+    var p=pf.pos[o.i],c=ACT[o.act],r=p[2]*(o.f&&!reduce?1+.04*Math.sin(pf.t*3+o.i):1);
+    x.beginPath();x.arc(p[0],p[1],r,0,7);x.fillStyle=o.f?'rgba('+c+',.88)':'rgba('+c+',.16)';x.fill();
+    x.lineWidth=2;x.strokeStyle='rgb('+c+')';x.stroke();
+    if(o.g){x.setLineDash([3,4]);x.beginPath();x.arc(p[0],p[1],r+5,0,7);x.stroke();x.setLineDash([])}
+    x.fillStyle=o.f?'#fff':'rgb('+c+')';x.font='800 '+Math.round(13*sc+1)+'px '+FONT;x.textAlign='center';x.textBaseline='middle';x.fillText(o.i+1,p[0],p[1]);
+  });
+  if(pf.hov>=0){var p=pf.pos[pf.hov],s=PFI[pf.hov][0];x.font='700 13px '+FONT;var tw=x.measureText(s).width+18,bx=Math.max(4,Math.min(w-tw-4,p[0]-tw/2)),by=p[1]-p[2]-34;if(by<2)by=p[1]+p[2]+6;
+    rr(x,bx,by,tw,26,13);x.fillStyle=CK.box;x.fill();x.strokeStyle=CK.boxLine;x.lineWidth=1;x.stroke();x.fillStyle=CK.ink;x.textAlign='left';x.fillText(s,bx+9,by+13)}
+  x.textBaseline='alphabetic';
+};
+
+/* ---------------- Compounding Value ---------------- */
+var CVS=(function(){
+  var C=10,nA=0,cA=0,nB=0,nB0=0,cB=0,A=[[0,0,0]],Bv=[[0,0,0]],cross=0;
+  for(var m=1;m<=36;m++){
+    var up=.035*nA;nA+=Math.max(0,C-up);cA+=nA*.5;A.push([cA,up/C,nA]);
+    var ub;
+    if(m<=6){ub=.035*nB0;nB0+=Math.max(0,3-ub);ub=ub+7;cB+=nB0*.5;Bv.push([cB,(.035*nB0)/C,nB0])}
+    else{ub=.035*nB0+.01*nB;nB+=Math.max(0,C-ub)/1.3;cB+=nB0*.5+nB;Bv.push([cB,ub/C,nB0+nB])}
+    if(!cross&&cB>cA)cross=m;
+  }
+  return{A:A,B:Bv,cross:cross,max:Math.max(cA,cB)};
+})();
+var cvs={t:0,show:'v',built:false,f:null};
+function cvAt(arr,t){var i=Math.floor(t),k=t-i;if(i>=36)return arr[36];return arr[i].map(function(v,j){return lerp(v,arr[i+1][j],k)})}
+INIT.cv=function(){
+  if(!cvs.built){cvs.built=true;
+    document.querySelectorAll('#cvShow button').forEach(function(b){b.onclick=function(){cvs.show=b.dataset.s;document.querySelectorAll('#cvShow button').forEach(function(x){x.setAttribute('aria-pressed',x===b?'true':'false')})}});
+    $('cvPlay').onclick=function(){cvs.t=0};
+  }
+  var cv=$('cvCv');cv.setAttribute('height',cv.clientWidth<520?300:360);cvs.f=fit(cv);
+  if(!RS)cvs.t=reduce?36:0;
+};
+FR.cv=function(dt){
+  var f=cvs.f;if(!f)return;var x=f.x,w=f.w,h=f.h,L=48,B=30,T=18,Rr=w<520?16:120;
+  cvs.t=Math.min(36,cvs.t+dt*4);var t=cvs.t,uv=cvs.show==='u';
+  x.clearRect(0,0,w,h);
+  var X=function(m){return L+(w-L-Rr)*m/36},Y=function(v){return T+(h-T-B)*(1-v/(uv?1:CVS.max*1.04))};
+  x.font='600 11px '+FONT;x.fillStyle=CK.tick;x.strokeStyle=CK.lane;x.lineWidth=1;x.textAlign='center';
+  for(var m=0;m<=36;m+=6){x.beginPath();x.moveTo(X(m),T);x.lineTo(X(m),h-B);x.stroke();x.fillText(m?(w<520?'M'+m:'Month '+m):'Start',X(m),h-10)}
+  x.textAlign='right';
+  for(var q=1;q<=4;q++){var yy=T+(h-T-B)*(1-q/4);x.beginPath();x.moveTo(L,yy);x.lineTo(X(36),yy);x.stroke();if(uv)x.fillText(q*25+'%',L-6,yy+4)}
+  if(!uv){x.save();x.translate(14,T);x.rotate(-Math.PI/2);x.fillText('Decision value delivered →',0,0);x.restore()}
+  x.fillStyle='rgba(50,175,125,.08)';x.fillRect(X(0),T,X(6)-X(0),h-T-B);
+  x.fillStyle=CK.muted;x.textAlign='left';x.font='700 11px '+FONT;if(w>=520)x.fillText('Building the foundation',X(0)+6,T+14);
+  var S=[[CVS.A,'240,120,85','Report by report'],[CVS.B,'50,175,125','Foundation first']];
+  S.forEach(function(s,si){
+    var arr=s[0],j=uv?1:0;x.beginPath();
+    for(var mm=0;mm<=t+.001;mm+=.25){var v=cvAt(arr,Math.min(mm,t))[j];if(mm===0)x.moveTo(X(mm),Y(v));else x.lineTo(X(mm),Y(v))}
+    var ve=cvAt(arr,t)[j];x.lineTo(X(t),Y(ve));
+    x.strokeStyle='rgb('+s[1]+')';x.lineWidth=3;x.lineJoin='round';x.stroke();
+    if(si===1&&!uv){x.lineTo(X(t),Y(0));x.lineTo(X(0),Y(0));x.closePath();x.fillStyle='rgba(50,175,125,.1)';x.fill()}
+    x.beginPath();x.arc(X(t),Y(ve),5,0,7);x.fillStyle='rgb('+s[1]+')';x.fill();
+    if(w>=520){x.font='700 12.5px '+FONT;x.textAlign='left';x.fillStyle='rgb('+s[1]+')';x.fillText(s[2],X(t)+10,Y(ve)+4)}
+  });
+  if(!uv&&t>=CVS.cross){var cx=X(CVS.cross);x.strokeStyle=CK.ink;x.globalAlpha=.5;x.setLineDash([4,4]);x.beginPath();x.moveTo(cx,T+22);x.lineTo(cx,h-B);x.stroke();x.setLineDash([]);x.globalAlpha=1;
+    x.font='700 12px '+FONT;x.fillStyle=CK.ink;var ct=w<520?'Overtakes, month '+CVS.cross:'Foundation first overtakes, month '+CVS.cross,ctw=x.measureText(ct).width;x.textAlign='left';x.fillText(ct,cx+6+ctw>w-4?cx-6-ctw:cx+6,w<520?T+52:T+34)}
+  if(w<520){x.font='700 11.5px '+FONT;x.textAlign='left';x.fillStyle='rgb(240,120,85)';x.fillText('● Report by report',L+4,T+12);x.fillStyle='rgb(50,175,125)';x.fillText('● Foundation first',L+4,T+28)}
+  var a=cvAt(CVS.A,t),b=cvAt(CVS.B,t);
+  $('cvM').textContent=Math.floor(t);
+  $('cvA').textContent=Math.round(a[2])+' reports built. '+Math.round(a[1]*100)+'% of team time on upkeep.';
+  $('cvB').textContent=Math.round(b[2])+' products built. '+Math.round(b[1]*100)+'% of team time on upkeep.';
+  var e=CVS.A[36],g=CVS.B[36],msg;
+  if(t<CVS.cross)msg='<b>Early on, report by report looks ahead.</b> Leaders see new reports every month while the foundation is still being built. This is where most estates get stuck.';
+  else if(t<36)msg='<b>The lines cross.</b> Each product on the governed model costs less to run, so more of the team\'s time goes to new questions.';
+  else msg='<b>By month 36,</b> foundation first has delivered about '+(g[0]/e[0]).toFixed(1)+' times the decision value, with '+Math.round(g[1]*100)+'% of team time on upkeep instead of '+Math.round(e[1]*100)+'%. Both paths build a similar number of outputs. The difference is how much each one is worth and what it costs to keep running.';
+  if($('cvMsg').dataset.m!==msg){$('cvMsg').dataset.m=msg;$('cvMsg').innerHTML=msg}
+};
+
+/* ---------------- Maturity Horizons ---------------- */
+var MHL=[['Fragmented','Many reports, unclear owners, numbers that disagree.'],['Trusted reporting','One governed model, owned definitions, a focused core.'],['Self-serve insight','Data products people use without asking the data team.'],['Predictive and explainable','Forecasts and risk insight with reasons, and people act on them.'],['AI-augmented decisions','AI in daily decisions, monitored and governed, with people accountable.']];
+var MHS=[
+ {n:'Starting point',lv:1.25,d:[1,1,2,2,1],t:'Around 950 reports, with duplication and low-value reports. Frequent daily reporting escalations as late as January 2026.',k:'First move: see the estate, and who owns each part of it.'},
+ {n:'Now',lv:2.6,d:[3,3,3,3,2.5],t:'A focused core of about 200 reports on a governed model. No reporting escalations from March 2026. STRAP links explainable risk insight with staff-led support, and PAILA safeguards are being shaped.',k:'Levers moved: data (one model), process (service ownership) and governance (STRAP and PAILA safeguards).'},
+ {n:'Next 18 months',lv:4.05,d:[4,4,3.5,4,4.5],t:'Illustrative target: self-serve data products across the institution, explainable risk insight at scale, and AI assistants in monitored use under a governance framework informed by the doctoral research.',k:'Levers to move: people (data literacy for leaders), technology (self-serve on the Data Lake) and governance (an AI framework in daily use).'}
+];
+var MHD=['Data','Process','People','Technology','Governance'];
+var mh={s:1,cur:1.25,tel:false,built:false,f:null,t:0};
+function mhSet(s){
+  mh.s=s;var S=MHS[s];
+  document.querySelectorAll('#mhSt .chip').forEach(function(c,j){c.classList.toggle('on',j===s)});
+  $('mhH').textContent=S.n;$('mhTxt').textContent=S.t;$('mhLev').textContent=S.k;
+  $('mhDims').innerHTML=MHD.map(function(d,k){return '<div class="dim2"><span>'+d+'</span><div class="tr"><i style="width:0;background:rgb('+DEEP[k]+')"></i></div><b>'+S.d[k]+'</b></div>'}).join('');
+  setTimeout(function(){document.querySelectorAll('#mhDims .tr i').forEach(function(e,k){e.style.width=(S.d[k]/5*100)+'%'})},30);
+}
+INIT.mh=function(){
+  if(!mh.built){mh.built=true;var c=$('mhSt');MHS.forEach(function(s,i){var b=document.createElement('button');b.className='chip';b.textContent=s.n;b.onclick=function(){mhSet(i)};c.appendChild(b)});
+    $('mhTel').onchange=function(){mh.tel=this.checked}}
+  var cv=$('mhCv');cv.setAttribute('height',cv.clientWidth<520?280:330);mh.f=fit(cv);
+  if(!RS){mh.cur=MHS[0].lv;mhSet(1)}
+};
+function mhGeo(){var f=mh.f,m=f.w<520?10:24,sw=(f.w-2*m)/5,base=f.h-20,top=f.w<520?60:72,h0=f.w<520?40:70,st=(base-top-h0)/4;return{m:m,sw:sw,base:base,st:st,h0:h0}}
+function mhTop(k,G){return G.base-G.h0-k*G.st}
+function mhPt(lv,G){var u=Math.max(0,Math.min(4.999,lv-1)),k=Math.floor(u),fr=u-k,y=mhTop(k,G);if(fr>.85&&k<4)y=lerp(y,mhTop(k+1,G),(fr-.85)/.15);return[G.m+G.sw*u+G.sw*.06,y]}
+FR.mh=function(dt){
+  var f=mh.f;if(!f)return;var x=f.x,w=f.w,h=f.h,G=mhGeo(),nar=w<520;mh.t+=dt;
+  x.clearRect(0,0,w,h);
+  for(var i=0;i<5;i++){
+    var X0=G.m+G.sw*i,Yt=mhTop(i,G),active=mh.cur>=i+1-.001;
+    x.fillStyle='rgba('+PAS[i]+','+(active?.55:.2)+')';rr(x,X0+2,Yt,G.sw-4,G.base-Yt,12);x.fill();
+    x.fillStyle=CK.ink;x.textAlign='left';x.font='800 '+(nar?11:13)+'px '+FONT;
+    x.fillText((i+1)+(nar?'':' '+MHL[i][0]),X0+10,Yt+18);
+    if(!nar){x.font='500 11.5px '+FONT;x.fillStyle=CK.muted;var words=MHL[i][1].split(' '),line='',ly=Yt+34;words.forEach(function(wd){var tt=line?line+' '+wd:wd;if(x.measureText(tt).width>G.sw-22){x.fillText(line,X0+10,ly);line=wd;ly+=14}else line=tt});if(ly<G.base-4)x.fillText(line,X0+10,ly)}
+  }
+  if(nar){x.font='700 11px '+FONT;x.fillStyle=CK.muted;x.textAlign='left';x.fillText(MHL[Math.max(0,Math.min(4,Math.floor(mh.cur-1)))][0],G.m,16)}
+  var tg=MHS[mh.s].lv;mh.cur=reduce?tg:lerp(mh.cur,tg,Math.min(1,dt*1.8));
+  var a=Math.min(MHS[0].lv,mh.cur);x.beginPath();for(var l=a;l<=mh.cur+.001;l+=.02){var p=mhPt(l,G);if(l===a)x.moveTo(p[0],p[1]-8);else x.lineTo(p[0],p[1]-8)}
+  x.strokeStyle='rgba(8,102,220,.75)';x.lineWidth=3;x.stroke();
+  MHS.forEach(function(s,i){var p=mhPt(s.lv,G);x.globalAlpha=i===mh.s?1:.55;x.strokeStyle=i===2?'rgb(230,95,150)':CK.ink;x.lineWidth=1.5;if(i===2)x.setLineDash([3,3]);x.beginPath();x.moveTo(p[0],p[1]);x.lineTo(p[0],p[1]-30);x.stroke();x.setLineDash([]);
+    x.fillStyle=i===2?'rgb(230,95,150)':CK.ink;x.font='700 '+(nar?10:11.5)+'px '+FONT;x.textAlign='left';x.fillText(nar?['Start','Now','Next'][i]:s.n,p[0]+4,p[1]-22);x.globalAlpha=1});
+  if(mh.tel){var p=mhPt(4.55,G),pz=reduce?0:Math.sin(mh.t*3)*2;x.beginPath();x.arc(p[0],p[1]-8,8+pz,0,7);x.strokeStyle='rgb(135,110,225)';x.lineWidth=2.5;x.setLineDash([3,3]);x.stroke();x.setLineDash([]);
+    x.fillStyle='rgb(135,110,225)';x.font='800 '+(nar?10:11.5)+'px '+FONT;x.textAlign='left';x.beginPath();x.moveTo(p[0],p[1]-16);x.lineTo(p[0],p[1]-44);x.stroke();x.fillText(nar?'Telecom':'Telecom, done before',p[0]-(nar?20:40),p[1]-50)}
+  var c=mhPt(mh.cur,G),bob=reduce?0:Math.sin(mh.t*4)*1.5;
+  x.beginPath();x.arc(c[0],c[1]-10+bob,9,0,7);x.fillStyle='rgb(8,102,220)';x.fill();x.lineWidth=3;x.strokeStyle=CK.box;x.stroke();
+};
+
+/* ================= Leadership ================= */
+
+/* ---------------- Operating Rhythm ---------------- */
+var ORC=[['Weekly','70,150,235'],['Monthly','135,110,225'],['Quarterly','230,95,150'],['Annual','235,160,50']];
+var ORF=[
+ {c:0,a:-60,s:'Service check',n:'Delivery and service check',p:'Keep services working and data quality visible.',i:'Service tickets, data-quality alerts, delivery status',d:'Fix now, escalate, or accept',o:'Owned actions with dates',pre:'Service ownership took reporting escalations from daily in January to none from March 2026 (UEL).'},
+ {c:0,a:125,s:'Insight brief',n:'Weekly insight brief',p:'Tell leaders what changed and what needs a decision.',i:'Trusted KPIs from one model',d:'What to raise and what to watch',o:'A short brief with recommendations',pre:'Weekly and monthly recommendations to senior management (ZTE).'},
+ {c:1,a:20,s:'KPI review',n:'KPI and performance review',p:'Check the measures that matter and agree where to act.',i:'KPI pack, trends, forecasts',d:'Where to act and who owns it',o:'Priorities for the month',pre:'Strategic KPI, student information and survey reporting (UEL).'},
+ {c:1,a:205,s:'Governance board',n:'Data and AI governance board',p:'Decide which data and AI uses go ahead, and on what terms.',i:'New use cases, risk checks, monitoring results',d:'Approve, approve with conditions, or pause',o:'A decision log with owners',pre:'Acceptance criteria, monitoring and failure handling shaped for PAILA (UEL).'},
+ {c:2,a:-125,s:'Portfolio review',n:'Portfolio review',p:'Re-rank the work against strategy and capacity.',i:'Value, readiness and risk for each initiative',d:'Fund, fix or stop',o:'The plan for next quarter',pre:'ML ranking, risk and cost models used to prioritise network upgrades (ZTE).'},
+ {c:2,a:80,s:'Benefits check',n:'Benefits check',p:'Confirm that the value promised actually arrived.',i:'Before and after measures, with their basis',d:'Keep, change or retire',o:'A benefits record',pre:'Co-led business-case outcomes for the 3,600-site upgrade (Ooredoo).'},
+ {c:3,a:-15,s:'Strategy refresh',n:'Strategy and roadmap refresh',p:'Set the bets for the year.',i:'Strategy, outcomes, maturity, budget',d:'Which bets to make',o:'Roadmap and business cases',pre:'Turned operational analysis into annual plans and investment recommendations (TEOCO).'}
+];
+var orr={sel:0,user:false,ang:-90,ps:[],pz:[],built:false,f:null};
+function orSel(i,user){
+  orr.sel=i;if(user)orr.user=true;var F=ORF[i],c=ORC[F.c];
+  $('orCard').innerHTML='<div class="orc"><span class="cad" style="color:rgb('+c[1]+')">'+c[0]+'</span><h4>'+F.n+'</h4><p class="dec" style="margin-top:4px">'+F.p+'</p><dl><dt>Comes in</dt><dd>'+F.i+'</dd><dt>Decides</dt><dd>'+F.d+'</dd><dt>Goes out</dt><dd>'+F.o+'</dd><dt>Done before</dt><dd>'+F.pre+'</dd></dl></div>'+
+   '<p class="note" style="margin-top:12px"><b style="color:rgb(240,120,85)">●</b> issues rising to the forum that can settle them &nbsp; <b style="color:rgb(8,102,220)">●</b> decisions coming back as owned actions</p>';
+}
+function orGeo(){var f=orr.f,R=Math.min(f.w,f.h)/2-(f.w<520?18:30);return{cx:f.w/2,cy:f.h/2,r:[.34,.55,.76,.97].map(function(k){return R*k})}}
+function orPos(F,G){var a=F.a*Math.PI/180;return[G.cx+Math.cos(a)*G.r[F.c],G.cy+Math.sin(a)*G.r[F.c]]}
+INIT.or=function(){
+  if(!orr.built){orr.built=true;var cv=$('orCv');
+    cv.addEventListener('click',function(e){var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,G=orGeo(),b=-1,bd=30;ORF.forEach(function(F,i){var p=orPos(F,G),d=Math.hypot(p[0]-mx,p[1]-my);if(d<bd){bd=d;b=i}});if(b>=0)orSel(b,true)});
+    cv.addEventListener('mousemove',function(e){var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top,G=orGeo(),on=ORF.some(function(F){var p=orPos(F,G);return Math.hypot(p[0]-mx,p[1]-my)<24});cv.style.cursor=on?'pointer':'default'});
+  }
+  var cv=$('orCv');cv.setAttribute('height',cv.clientWidth<520?Math.max(320,cv.clientWidth):440);orr.f=fit(cv);
+  if(!RS){orr.user=false;orr.ps=[];orSel(orr.sel)}
+};
+FR.or=function(dt){
+  var f=orr.f;if(!f)return;var x=f.x,w=f.w,h=f.h,G=orGeo(),nar=w<520;
+  x.clearRect(0,0,w,h);
+  G.r.forEach(function(r,i){x.beginPath();x.arc(G.cx,G.cy,r,0,7);x.strokeStyle='rgba('+ORC[i][1]+',.45)';x.lineWidth=i===ORF[orr.sel].c?3:1.5;x.stroke();
+    x.font='800 '+(nar?9.5:10.5)+'px '+FONT;x.fillStyle='rgb('+ORC[i][1]+')';x.textAlign='center';x.fillText(ORC[i][0].toUpperCase(),G.cx,G.cy-r+(nar?12:14))});
+  x.beginPath();x.arc(G.cx,G.cy,G.r[0]*.55,0,7);x.fillStyle=CK.box;x.fill();x.strokeStyle=CK.boxLine;x.lineWidth=1;x.stroke();
+  x.fillStyle=CK.ink;x.font='800 '+(nar?10:12)+'px '+FONT;x.textAlign='center';x.fillText('Owned',G.cx,G.cy-2);x.fillText('actions',G.cx,G.cy+(nar?11:14));
+  var prev=orr.ang;if(!reduce)orr.ang+=dt*30;
+  var sa=orr.ang*Math.PI/180,g=x.createLinearGradient(G.cx,G.cy,G.cx+Math.cos(sa)*G.r[3],G.cy+Math.sin(sa)*G.r[3]);g.addColorStop(0,'rgba(8,102,220,0)');g.addColorStop(1,'rgba(8,102,220,.5)');
+  x.beginPath();x.moveTo(G.cx+Math.cos(sa)*G.r[0]*.55,G.cy+Math.sin(sa)*G.r[0]*.55);x.lineTo(G.cx+Math.cos(sa)*G.r[3],G.cy+Math.sin(sa)*G.r[3]);x.strokeStyle=g;x.lineWidth=2;x.stroke();
+  ORF.forEach(function(F,i){
+    var A=((F.a%360)+360)%360,p0=((prev%360)+360)%360,p1=((orr.ang%360)+360)%360,pass=p0<=p1?(A>p0&&A<=p1):(A>p0||A<=p1);
+    if(pass&&!reduce){orr.pz[i]=1;
+      if(F.c<3)orr.ps.push({a:F.a,r0:G.r[F.c],r1:G.r[F.c+1],k:0,c:'240,120,85',i0:F.c,i1:F.c+1});
+      if(F.c>0)orr.ps.push({a:F.a+18,r0:G.r[F.c],r1:G.r[F.c-1],k:0,c:'8,102,220',i0:F.c,i1:F.c-1});
+      else orr.ps.push({a:F.a,r0:G.r[0],r1:G.r[0]*.55,k:0,c:'8,102,220',i0:0,i1:-1});
+      if(!orr.user)orSel(i);
+    }
+    orr.pz[i]=Math.max(0,(orr.pz[i]||0)-dt*1.4);
+  });
+  orr.ps=orr.ps.filter(function(q){q.k+=dt*.9;return q.k<1});
+  orr.ps.forEach(function(q){var R=function(i){return i<0?G.r[0]*.55:G.r[i]},r=lerp(R(q.i0),R(q.i1),ease(q.k)),a=q.a*Math.PI/180;x.beginPath();x.arc(G.cx+Math.cos(a)*r,G.cy+Math.sin(a)*r,4,0,7);x.fillStyle='rgba('+q.c+','+(1-q.k*.4)+')';x.fill()});
+  ORF.forEach(function(F,i){
+    var p=orPos(F,G),c=ORC[F.c][1],on=i===orr.sel,pz=orr.pz[i]||0,r=(nar?7:9)+(on?3:0);
+    if(pz>0){x.beginPath();x.arc(p[0],p[1],r+14*(1-pz),0,7);x.strokeStyle='rgba('+c+','+pz+')';x.lineWidth=2;x.stroke()}
+    x.beginPath();x.arc(p[0],p[1],r,0,7);x.fillStyle='rgb('+c+')';x.fill();if(on){x.lineWidth=3;x.strokeStyle=CK.box;x.stroke()}
+    var right=Math.cos(F.a*Math.PI/180)>=0;x.font=(on?'800 ':'700 ')+(nar?10.5:12.5)+'px '+FONT;x.textAlign=right?'left':'right';
+    if(nar&&!on&&pz<=0)return;
+    var tw=x.measureText(F.s).width,x0=right?p[0]+r+6:p[0]-r-6-tw,y0=p[1]+4;
+    if(x0<2||x0+tw>w-2){x0=Math.max(2,Math.min(w-tw-2,p[0]-tw/2));y0=p[1]-r-6}
+    x.textAlign='left';x.fillStyle=CK.box;x.globalAlpha=.85;x.fillRect(x0-2,y0-13,tw+4,17);x.globalAlpha=1;
+    x.fillStyle=on?CK.ink:CK.muted;x.fillText(F.s,x0,y0);
+  });
+};
+
+/* ---------------- Role Lens ---------------- */
+var RAX=[['Strategy and business cases','Strategy'],['Data governance','Data gov.'],['AI governance and risk','AI gov.'],['Delivery at scale','Delivery'],['Executive influence','Exec influence'],['Operating rhythm','Op. rhythm'],['People and mentoring','People'],['Commercial value','Commercial']];
+var REV=[
+ ['Capacity forecasts and ranking models turned network demand into upgrade priorities (ZTE).','Operational analysis turned into annual plans and investment recommendations (TEOCO).','Business-case outcomes for the 3,600-site upgrade (Ooredoo).','AI and data strategy: roadmaps, business cases and prioritised investment.','IBM Product Management certificate.'],
+ ['Reporting estate rationalised around a governed model, about 950 to about 200 (UEL).','Strategic KPI, student information, survey, admissions and research-system reporting (UEL).','Service ownership for reporting services (UEL).','UEL Data Protection training.'],
+ ['PhD via MPhil: a responsible AI governance framework for UK higher education.','STRAP: explainable student-risk insight with accountable, staff-led support.','PAILA: acceptance criteria, monitoring and failure handling.','Google Responsible AI and Rutgers AI Ethics in Business.','122-source research corpus and a 40-source thematic synthesis.'],
+ ['3,600-site upgrade delivered in eight months (Ooredoo).','Ericsson ACE Award: delivery in half the target timeline, 80+ offshore resources.','Analytical tools taken from proof of concept into operational use (ZTE).','LTE optimisation and launch readiness across a regional network (Reliance Jio).','100% of customer-complaint SLA requirements met (S TEL).'],
+ ['Weekly and monthly recommendations to senior management (ZTE).','2026 Service Excellence Award for strategic data leadership (UEL).','Connects operational needs with executive and academic priorities (UEL).','Leadership enablement: executive insight and decision support.'],
+ ['A weekly and monthly recommendation cycle with senior management (ZTE).','Cross-team coordination: reporting escalations from daily to none (UEL).','Coordinated engineering, field teams, vendors and national headquarters (Reliance Jio).'],
+ ['12+ engineers mentored (ZTE).','ZTE Outstanding Supervisor Manager award.','Taught AI, Big Data and Power BI at UEL.','Invited guest lecture, 23 July 2026.','Mentors colleagues and students (UEL).'],
+ ['Reported 18% monthly revenue improvement (ZTE and Ooredoo).','Reported 22% monthly revenue uplift at capacity-constrained sites (TEOCO).','ML risk and cost models used to prioritise investment (ZTE).','Business cases for the upgrade programme.']
+];
+var RLINK={0:['pf','Portfolio Lens'],1:['est','Estate'],2:['chk','Responsible AI Check'],3:['map','Value Chain'],4:['sv','Strategy to Value'],5:['or','Operating Rhythm'],6:['prin','Impact and Evidence'],7:['cv','Compounding Value']};
+var RT=[[.8,.95,.7,.85,.7,.65,.8,.6],[.95,.8,.75,.8,.9,.8,.8,.85],[.85,.45,.5,.8,.95,.95,.7,.65],[.9,.7,.95,.75,.85,.7,.75,.85]];
+var RSUM=['Leads the data function: trusted data, products people use, and the team behind them.','Owns data and AI strategy across the organisation, and is accountable for the value it returns.','Runs the leadership agenda: the rhythm, the priorities and the cross-team decisions.','Sets AI strategy and its guardrails, and answers to the board for both value and risk.'];
+var PH=['Days 1 to 30: listen and map','Days 31 to 60: prove value','Days 61 to 100: commit and scale'];
+var RPL=[
+ [[['Meet the main decision-makers and ask what they decide, and with which numbers.','Map the reporting estate and who owns each part.','Agree the top KPIs and one definition for each.'],'UEL estate mapped and rationalised, about 950 to about 200.'],
+  [['Fix the report leaders trust least, in public.','Set service ownership and a clear escalation route.','Start data-quality checks on the core measures.'],'Reporting escalations from daily in January to none from March 2026.'],
+  [['Publish a data roadmap with business cases.','Launch the data and AI governance forum.','Plan the team and skills for the year ahead.'],'Annual plans and investment recommendations (TEOCO).']],
+ [[['Agree with the executive team the three or four outcomes data must move.','Review the whole portfolio for value, readiness and risk.','Map teams, suppliers and spend.'],'ML ranking, risk and cost models used to prioritise investment (ZTE).'],
+  [['Stop or merge low-value work, and fund the foundations.','Set the rhythm: weekly delivery, monthly KPI, quarterly portfolio.','Land one visible win for the executive team.'],'3,600-site upgrade with a business case, in eight months.'],
+  [['Present a multi-year data and AI strategy with business cases.','Agree the operating model across central and local teams.','Set success measures and report against them.'],'2026 Service Excellence Award for strategic data leadership.']],
+ [[['Learn the principal\'s priorities and how decisions are made today.','Map the forums, the owners and the open commitments.','Build one view of priorities and progress.'],'Weekly and monthly recommendations to senior management (ZTE).'],
+  [['Tighten the rhythm: clear agendas, decision logs, actions with owners.','Clear the backlog of stuck cross-team decisions.','Give the principal a weekly brief built on trusted data.'],'Coordinated engineering, field teams, vendors and national HQ (Reliance Jio).'],
+  [['Run the quarterly planning cycle.','Track commitments against the strategy.','Free the principal\'s time for the decisions only they can make.'],'Cross-team coordination that took escalations from daily to none (UEL).']],
+ [[['Build an inventory of AI in use and in plan.','Sort use cases by value and risk.','Meet legal, data protection, academic and operational leads.'],'Doctoral research on a responsible AI governance framework for UK HE.'],
+  [['Set the governance gate: acceptance criteria, monitoring, failure handling, a named owner.','Pick two use cases with clear value and low risk.','Start AI literacy sessions for leaders.'],'PAILA: acceptance criteria, monitoring and failure handling.'],
+  [['Publish the AI strategy and policy.','Put the first use cases into monitored use.','Report value and risk to the board in one view.'],'STRAP: explainable insight with accountable, staff-led action.']]
+];
+var rl={r:0,ax:-1,from:RT[0].slice(),k:1,t0:0,built:false,f:null,lab:[]};
+var REVD=REV.map(function(e){return Math.min(1,e.length/5)});
+function rlCard(){
+  var r=rl.r,T=RT[r],h;
+  if(rl.ax>=0){var a=rl.ax;h='<h3>'+RAX[a][0]+'</h3><p class="dec">Role emphasis '+Math.round(T[a]*100)+'%. Evidence on the site: '+REV[a].length+' item'+(REV[a].length>1?'s':'')+'.</p><ul class="evl">'+REV[a].map(function(s){return '<li>'+s+'</li>'}).join('')+'</ul>'+(RLINK[a]?'<button class="lnk" data-go="'+RLINK[a][0]+'">See '+RLINK[a][1]+' →</button>':'')+'<p style="margin:10px 0 0"><button class="lnk" id="rlBack">← Role summary</button></p>'}
+  else{
+    var strong=[],gaps=[];T.forEach(function(v,a){if(v>=.75&&REVD[a]>=.8)strong.push(a);if(v-REVD[a]>.15)gaps.push(a)});
+    h='<h3>'+ROLES[r]+'</h3><p class="dec">'+RSUM[r]+'</p><p class="dec" style="margin-top:10px"><b>Strongest match:</b> '+strong.map(function(a){return RAX[a][0].toLowerCase()}).join(', ')+'.</p>';
+    if(gaps.length)h+='<div class="gap"><b>Where to look harder:</b> '+gaps.map(function(a){return RAX[a][0].toLowerCase()+' (<button class="lnk" data-go="'+RLINK[a][0]+'">'+RLINK[a][1]+'</button>)'}).join(', ')+'. The role leans on this more than the site evidences today.</div>';
+    else h+='<div class="gap">Every area this role leans on has solid evidence on the site.</div>';
+  }
+  $('rlEv').innerHTML=h;
+  $('rlEv').querySelectorAll('[data-go]').forEach(function(b){b.onclick=function(){go(b.dataset.go)}});
+  var bk=$('rlBack');if(bk)bk.onclick=function(){rl.ax=-1;rlCard()};
+}
+function rlSel(i){
+  var curT=RT[rl.r].map(function(v,a){return lerp(rl.from[a],v,ease(rl.k))});
+  rl.from=curT;rl.r=i;rl.k=reduce?1:0;rl.ax=-1;rl.t0=performance.now();
+  document.querySelectorAll('#rlRole .chip').forEach(function(c,j){c.classList.toggle('on',j===i)});
+  $('rlPlanH').textContent='First 100 days as '+ROLES[i];
+  $('rlPlan').innerHTML=RPL[i].map(function(p,k){return '<div class="ph" id="rph'+k+'"><h4>'+PH[k]+'</h4><ul>'+p[0].map(function(s){return '<li>'+s+'</li>'}).join('')+'</ul><div class="pre"><b>Done before:</b> '+p[1]+'</div></div>'}).join('');
+  rlCard();
+}
+INIT.rl=function(){
+  if(!rl.built){rl.built=true;var c=$('rlRole');ROLES.forEach(function(r,i){var b=document.createElement('button');b.className='chip';b.textContent=r;b.onclick=function(){rlSel(i)};c.appendChild(b)});
+    var cv=$('rlCv');cv.addEventListener('click',function(e){var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;rl.lab.forEach(function(L,a){if(mx>L[0]-6&&mx<L[0]+L[2]+6&&my>L[1]-12&&my<L[1]+8){rl.ax=a;rlCard()}})});
+    cv.addEventListener('mousemove',function(e){var r=cv.getBoundingClientRect(),mx=e.clientX-r.left,my=e.clientY-r.top;cv.style.cursor=rl.lab.some(function(L){return mx>L[0]-6&&mx<L[0]+L[2]+6&&my>L[1]-12&&my<L[1]+8})?'pointer':'default'});
+    rlSel(rl.r);
+  }
+  var cv=$('rlCv');cv.setAttribute('height',cv.clientWidth<520?330:400);rl.f=fit(cv);
+  if(!RS)rl.t0=performance.now();
+};
+FR.rl=function(dt){
+  var f=rl.f;if(!f)return;var x=f.x,w=f.w,h=f.h,nar=w<520,cx=w/2,cy=h/2+4,R=Math.min(w/2-(nar?62:96),h/2-34),n=8;
+  rl.k=Math.min(1,rl.k+dt*1.6);var T=RT[rl.r].map(function(v,a){return lerp(rl.from[a],v,ease(rl.k))});
+  x.clearRect(0,0,w,h);
+  function P(a,v){var an=-Math.PI/2+a*2*Math.PI/n;return[cx+Math.cos(an)*R*v,cy+Math.sin(an)*R*v]}
+  x.strokeStyle=CK.lane;x.lineWidth=1;
+  [.25,.5,.75,1].forEach(function(v){x.beginPath();for(var a=0;a<=n;a++){var p=P(a%n,v);if(!a)x.moveTo(p[0],p[1]);else x.lineTo(p[0],p[1])}x.stroke()});
+  for(var a=0;a<n;a++){var p=P(a,1);x.beginPath();x.moveTo(cx,cy);x.lineTo(p[0],p[1]);x.stroke()}
+  var grow=reduce?1:ease(Math.min(1,(performance.now()-rl.t0)/900));
+  x.beginPath();REVD.forEach(function(v,a){var p=P(a,v*grow);if(!a)x.moveTo(p[0],p[1]);else x.lineTo(p[0],p[1])});x.closePath();x.fillStyle='rgba(8,102,220,.2)';x.fill();x.strokeStyle='rgb(8,102,220)';x.lineWidth=2;x.stroke();
+  x.beginPath();T.forEach(function(v,a){var p=P(a,v);if(!a)x.moveTo(p[0],p[1]);else x.lineTo(p[0],p[1])});x.closePath();x.strokeStyle='rgb(230,95,150)';x.lineWidth=2.5;x.setLineDash([6,5]);x.stroke();x.setLineDash([]);
+  REVD.forEach(function(v,a){var p=P(a,v*grow);x.beginPath();x.arc(p[0],p[1],a===rl.ax?6:4,0,7);x.fillStyle='rgb(8,102,220)';x.fill()});
+  rl.lab=[];x.font='700 '+(nar?11:12.5)+'px '+FONT;
+  RAX.forEach(function(L,a){var p=P(a,1),an=-Math.PI/2+a*2*Math.PI/n,s=nar?L[1]:L[0],tw=x.measureText(s).width,lx=cx+Math.cos(an)*(R+12),ly=cy+Math.sin(an)*(R+12)+4,c=Math.cos(an);
+    var x0=c>.3?lx:c<-.3?lx-tw:lx-tw/2;if(Math.sin(an)<-.9)ly-=4;if(Math.sin(an)>.9)ly+=8;
+    x.fillStyle=a===rl.ax?'rgb(8,102,220)':CK.ink;x.textAlign='left';x.fillText(s,x0,ly);rl.lab.push([x0,ly,tw])});
+  x.font='700 11.5px '+FONT;x.textAlign='left';x.fillStyle='rgb(8,102,220)';x.fillText('■ Evidence on the site',8,16);x.fillStyle='rgb(230,95,150)';x.fillText('- - What the role leans on',8,32);
+  var d=reduce?100:Math.min(100,(performance.now()-rl.t0)/60);
+  var bar=$('rlBar');if(bar){bar.style.width=d+'%';$('rlDay').textContent='Day '+Math.floor(d);[1,31,61].forEach(function(s,k){var e=$('rph'+k);if(e)e.classList.toggle('on',d>=s-1)})}
+};
+
+/* ---------------- loop ---------------- */
+INIT.chk=chkDraw;
+var last=0;
+function frame(ts){requestAnimationFrame(frame);var dt=Math.min((ts-last)/1000||0,.05);last=ts;if(reduce)dt=0;if(FR[cur])FR[cur](dt)}
+window.addEventListener('resize',function(){RS=true;if(INIT[cur])INIT[cur]();RS=false});
+applyTheme();
+INIT.home();
+requestAnimationFrame(frame);
+window.__lab={go:go,labSet:labSet,tcPick:tcPick,es:es,tc:tc,car:car,lab:lab,prinSel:prinSel,carView:carView,vcSel:vcSel,ask:ask,chkAnswer:chkAnswer,escSet:escSet,rlSel:rlSel,pfSet:pfSet,svSet:svSet,mhSet:mhSet,orSel:orSel,cvs:cvs,CVS:CVS,pf:pf,setMode:function(m){mode=m;applyTheme()}};
+})();
+
+</script>
+</body>
+</html>
